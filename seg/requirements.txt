@@ -19,7 +19,7 @@ timm==1.0.9
 tqdm==4.48.2
 typing-extensions==3.7.4.3
 wcwidth==0.2.5
-yapf==0.31.0
+# yapf==0.31.0
 # prettytable==2.1.0
 # yapf==0.40.1
 # torch==1.7.1+cu110

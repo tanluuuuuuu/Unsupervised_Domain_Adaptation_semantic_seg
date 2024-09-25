@@ -1,0 +1,35 @@
+2024-09-25 04:40:53,164 - mmseg - INFO - Checkpoints will be saved to /kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0439_240925_1005_gta2cs_mic_daformer_bcb5a_a9d5f by HardDiskBackend.
+Traceback (most recent call last):
+  File "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/run_experiments.py", line 131, in <module>
+    train.main([config_files[i]])
+  File "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/tools/train.py", line 169, in main
+    train_segmentor(
+  File "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/mmseg/apis/train.py", line 131, in train_segmentor
+    runner.run(data_loaders, cfg.workflow)
+  File "/opt/conda/lib/python3.10/site-packages/mmcv/runner/iter_based_runner.py", line 144, in run
+    iter_runner(iter_loaders[i], **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/mmcv/runner/iter_based_runner.py", line 64, in train
+    outputs = self.model.train_step(data_batch, self.optimizer, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/mmcv/parallel/data_parallel.py", line 76, in train_step
+    inputs, kwargs = self.scatter(inputs, kwargs, self.device_ids)
+  File "/opt/conda/lib/python3.10/site-packages/mmcv/parallel/data_parallel.py", line 55, in scatter
+    return scatter_kwargs(inputs, kwargs, device_ids, dim=self.dim)
+  File "/opt/conda/lib/python3.10/site-packages/mmcv/parallel/scatter_gather.py", line 60, in scatter_kwargs
+    inputs = scatter(inputs, target_gpus, dim) if inputs else []
+  File "/opt/conda/lib/python3.10/site-packages/mmcv/parallel/scatter_gather.py", line 50, in scatter
+    return scatter_map(inputs)
+  File "/opt/conda/lib/python3.10/site-packages/mmcv/parallel/scatter_gather.py", line 35, in scatter_map
+    return list(zip(*map(scatter_map, obj)))
+  File "/opt/conda/lib/python3.10/site-packages/mmcv/parallel/scatter_gather.py", line 40, in scatter_map
+    out = list(map(type(obj), zip(*map(scatter_map, obj.items()))))
+  File "/opt/conda/lib/python3.10/site-packages/mmcv/parallel/scatter_gather.py", line 35, in scatter_map
+    return list(zip(*map(scatter_map, obj)))
+  File "/opt/conda/lib/python3.10/site-packages/mmcv/parallel/scatter_gather.py", line 33, in scatter_map
+    return Scatter.forward(target_gpus, obj.data)
+  File "/opt/conda/lib/python3.10/site-packages/mmcv/parallel/_functions.py", line 75, in forward
+    streams = [_get_stream(device) for device in target_gpus]
+  File "/opt/conda/lib/python3.10/site-packages/mmcv/parallel/_functions.py", line 75, in <listcomp>
+    streams = [_get_stream(device) for device in target_gpus]
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/parallel/_functions.py", line 117, in _get_stream
+    if device.type == "cpu":
+AttributeError: 'int' object has no attribute 'type'
