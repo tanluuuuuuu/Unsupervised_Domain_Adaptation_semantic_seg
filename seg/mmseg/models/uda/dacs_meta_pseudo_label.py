@@ -308,6 +308,9 @@ class DACS(UDADecorator):
         Returns:
             dict[str, Tensor]: a dictionary of loss components
         """
+        print("MY INFO: forward train called")
+        print("MY INFO batch_size: ", batch_size)
+
         log_vars = {}
         batch_size = img.shape[0]
         dev = img.device
@@ -319,6 +322,7 @@ class DACS(UDADecorator):
 
         if self.local_iter > 0:
             self._update_ema(self.local_iter)
+            print("MY INFO updated ema ", self.local_iter)
             # assert not _params_equal(self.get_ema_model(), self.get_model())
             # assert self.get_ema_model().training
         if self.mic is not None:
