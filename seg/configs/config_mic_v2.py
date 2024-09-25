@@ -37,14 +37,14 @@ model = dict(
         loss_decode=dict(
             type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
     train_cfg=dict(
-        work_dir='work_dirs/local-basic/240925_0921_gta2cs_mic_daformer_35b8d',
+        work_dir='work_dirs/local-basic/240925_1005_gta2cs_mic_daformer_bcb5a',
         log_config=dict(
             interval=50,
             img_interval=1000,
             hooks=[dict(type='TextLoggerHook', by_epoch=False)])),
     test_cfg=dict(mode='whole'))
 dataset_type = 'CityscapesDataset'
-data_root = 'data/cityscapes/'
+data_root = '/kaggle/input/gtav-daformer'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 crop_size = (512, 512)
@@ -103,7 +103,7 @@ data = dict(
         type='UDADataset',
         source=dict(
             type='GTADataset',
-            data_root='data/gta/',
+            data_root='/kaggle/input/gtav-daformer/gta',
             img_dir='images',
             ann_dir='labels',
             pipeline=[
@@ -126,7 +126,7 @@ data = dict(
             ]),
         target=dict(
             type='CityscapesDataset',
-            data_root='data/cityscapes/',
+            data_root='/kaggle/input/gtav-daformer/cityscapes',
             img_dir='leftImg8bit/train',
             ann_dir='gtFine/train',
             pipeline=[
@@ -149,7 +149,7 @@ data = dict(
             min_pixels=3000, class_temp=0.01, min_crop_ratio=2.0)),
     val=dict(
         type='CityscapesDataset',
-        data_root='data/cityscapes/',
+        data_root='/kaggle/input/gtav-daformer/cityscapes',
         img_dir='leftImg8bit/val',
         ann_dir='gtFine/val',
         pipeline=[
@@ -172,7 +172,7 @@ data = dict(
         ]),
     test=dict(
         type='CityscapesDataset',
-        data_root='data/cityscapes/',
+        data_root='/kaggle/input/gtav-daformer/cityscapes',
         img_dir='leftImg8bit/val',
         ann_dir='gtFine/val',
         pipeline=[
@@ -240,7 +240,7 @@ gpu_model = 'NVIDIATITANRTX'
 runner = dict(type='IterBasedRunner', max_iters=40000)
 checkpoint_config = dict(by_epoch=False, interval=40000, max_keep_ckpts=1)
 evaluation = dict(interval=4000, metric='mIoU')
-name = '240925_0921_gta2cs_mic_daformer_35b8d'
+name = '240925_1005_gta2cs_mic_daformer_bcb5a'
 exp = 'basic'
 name_dataset = 'gta2cityscapes_512x512'
 name_architecture = 'daformer_sepaspp_mitb5'
@@ -248,6 +248,6 @@ name_encoder = 'mitb5'
 name_decoder = 'daformer_sepaspp'
 name_uda = 'dacs_a999_fdthings_rcs0.01-2.0_cpl2_m64-0.7-spta'
 name_opt = 'adamw_6e-05_pmTrue_poly10warm_1x2_40k'
-work_dir = 'work_dirs/local-basic/240925_0921_gta2cs_mic_daformer_35b8d'
-git_rev = '2f932a98b5dd9f598aaeb32411863ceea0809314'
+work_dir = 'work_dirs/local-basic/240925_1005_gta2cs_mic_daformer_bcb5a'
+git_rev = '1cdeff807e12c20d8e3dc70a4bddd6e35114cfba'
 gpu_ids = range(0, 1)

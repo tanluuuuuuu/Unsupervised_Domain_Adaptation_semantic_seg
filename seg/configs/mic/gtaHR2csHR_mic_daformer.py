@@ -16,6 +16,7 @@ _base_ = [
     # Linear Learning Rate Warmup with Subsequent Linear Decay
     '../_base_/schedules/poly10warm.py'
 ]
+data_root = '/kaggle/input/gtav-daformer'
 # Random Seed
 seed = 2  # seed with median performance
 # HRDA Configuration
