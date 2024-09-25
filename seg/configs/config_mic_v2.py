@@ -1,6 +1,6 @@
 log_config = dict(
     interval=50,
-    img_interval=1000,
+    img_interval=200,
     hooks=[dict(type='TextLoggerHook', by_epoch=False)])
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
