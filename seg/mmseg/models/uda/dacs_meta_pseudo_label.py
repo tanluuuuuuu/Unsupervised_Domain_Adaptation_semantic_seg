@@ -309,10 +309,11 @@ class DACS_META_PSLBL(UDADecorator):
             dict[str, Tensor]: a dictionary of loss components
         """
         print("MY INFO: forward train called")
-        print("MY INFO batch_size: ", batch_size)
+
 
         log_vars = {}
         batch_size = img.shape[0]
+        print("MY INFO batch_size: ", batch_size)
         dev = img.device
 
         # Init/update ema model
