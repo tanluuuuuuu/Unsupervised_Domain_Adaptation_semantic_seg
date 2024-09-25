@@ -63,6 +63,7 @@ def _get_stream(device: torch.device):
     global _streams
     if isinstance(device, int):
         device = torch.cuda.device(device)
+        print(device)
     # if device.type == "cpu":
         # return None
     device_mod = getattr(torch, device.type, None)
