@@ -4,13 +4,13 @@ log_config = dict(
     hooks=[dict(type='TextLoggerHook', by_epoch=False)])
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-load_from = None
-resume_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad/iter_200.pth"
+load_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad/iter_200.pth"
+resume_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad"
 workflow = [('train', 1)]
 cudnn_benchmark = True
 norm_cfg = dict(type='BN', requires_grad=True)
 find_unused_parameters = True
-checkpoint = 'resume_from'
+checkpoint = load_from
 model = dict(
     type='EncoderDecoder',
     pretrained=checkpoint,
