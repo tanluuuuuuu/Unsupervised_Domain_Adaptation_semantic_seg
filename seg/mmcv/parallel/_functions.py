@@ -62,10 +62,10 @@ def _get_stream(device: torch.device):
     """Get a background stream for copying between CPU and target device."""
     global _streams
     if isinstance(device, int):
-        device = torch.cuda.device(device)
-        print(device)
-    # if device.type == "cpu":
-        # return None
+        device = torch.device(f'cuda:{device}')
+
+    if device.type == "cpu":
+        return None
     device_mod = getattr(torch, device.type, None)
     if device_mod is None:
         return None
