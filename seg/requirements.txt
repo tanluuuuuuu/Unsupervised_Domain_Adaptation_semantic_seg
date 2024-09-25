@@ -1,4 +1,4 @@
-cityscapesscripts==2.2.0
+# cityscapesscripts==2.2.0
 cycler==0.10.0
 gdown==4.2.0
 humanfriendly==9.2
