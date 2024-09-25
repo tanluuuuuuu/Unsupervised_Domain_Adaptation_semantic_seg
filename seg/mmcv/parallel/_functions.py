@@ -1,5 +1,7 @@
 # Copyright (c) Open-MMLab. All rights reserved.
 import torch
+from torch.nn.parallel._functions import _get_stream
+
 
 def scatter(input, devices, streams=None):
     """Scatters tensor across multiple GPUs."""
@@ -61,9 +63,6 @@ def get_input_device(input):
 def _get_stream(device: torch.device):
     """Get a background stream for copying between CPU and target device."""
     global _streams
-    if isinstance(device, int):
-        device = torch.device(f'cuda:{device}')
-
     if device.type == "cpu":
         return None
     device_mod = getattr(torch, device.type, None)
@@ -83,7 +82,11 @@ class Scatter:
         streams = None
         if input_device == -1 and target_gpus != [-1]:
             # Perform CPU to GPU copies in a background stream
-            streams = [_get_stream(device) for device in target_gpus]
+            streams = []
+            for device in target_gpus:
+                if isinstance(device, int):
+                    device = torch.device(f'cuda:{device}')
+                    streams.append(_get_stream(device))
 
         outputs = scatter(input, target_gpus, streams)
         # Synchronize with the copy stream
