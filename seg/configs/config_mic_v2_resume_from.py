@@ -6,10 +6,13 @@ dist_params = dict(backend='nccl')
 log_level = 'INFO'
 
 # Bước 1: nhớ update biến max_iter trong config để nó train tiếp.
-load_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad/iter_200.pth" # Bước 2: Thay biến này đến file pth cuối cùng để train tiếp
-resume_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad/iter_200.pth" # Bước 3: Thay biến resume_from này đến folder cuối cùng để train tiếp
-checkpoint = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad/iter_200.pth" # Bước 4: Thay biến này đến file pth cuối cùng để train tiếp
-# Bước 5: chạy lệnh với --config <đến file config này>
+# Bước 2: thay 3 biến load_from, resume_from, checkpoint trong config thành đường dẫn đến file .pth cuối cùng
+# Bước 3: chạy lệnh với --config <đến file config này>
+# VD:
+load_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad/iter_200.pth" 
+resume_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad/iter_200.pth" 
+checkpoint = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad/iter_200.pth" 
+
 
 workflow = [('train', 1)]
 cudnn_benchmark = True
@@ -242,9 +245,13 @@ lr_config = dict(
 seed = 2
 n_gpus = 1
 gpu_model = 'NVIDIATITANRTX'
-runner = dict(type='IterBasedRunner', max_iters=400)
-checkpoint_config = dict(by_epoch=False, interval=100, max_keep_ckpts=1)
-evaluation = dict(interval=200, metric='mIoU')
+
+runner = dict(type='IterBasedRunner', max_iters=400) # max_iters ở đây là số lần train tối đa
+checkpoint_config = dict(by_epoch=False, interval=100, max_keep_ckpts=1) # interval ở đây là số lần lưu epoch, 
+                                                                        # vd như là mỗi lần train đc 100 vòng sẽ lưu epoch 1 lần
+evaluation = dict(interval=200, metric='mIoU') # interval ở đây là số lần chạy evaluation trên tập validation
+                                                # vd như ở đây là sẽ đánh giá mỗi lần train được 200 vòng
+
 name = '240925_1005_gta2cs_mic_daformer_bcb5a'
 exp = 'basic'
 name_dataset = 'gta2cityscapes_512x512'
