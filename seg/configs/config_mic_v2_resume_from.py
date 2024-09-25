@@ -4,13 +4,17 @@ log_config = dict(
     hooks=[dict(type='TextLoggerHook', by_epoch=False)])
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-load_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad/iter_200.pth"
-resume_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad"
+
+# Bước 1: nhớ update biến max_iter trong config để nó train tiếp.
+load_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad/iter_200.pth" # Bước 2: Thay biến này đến file pth cuối cùng để train tiếp
+resume_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad" # Bước 3: Thay biến resume_from này đến folder cuối cùng để train tiếp
+checkpoint = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240925_0746_240925_1005_gta2cs_mic_daformer_bcb5a_16dad/iter_200.pth" # Bước 4: Thay biến này đến file pth cuối cùng để train tiếp
+# Bước 5: chạy lệnh với --config <đến file config này>
+
 workflow = [('train', 1)]
 cudnn_benchmark = True
 norm_cfg = dict(type='BN', requires_grad=True)
 find_unused_parameters = True
-checkpoint = load_from
 model = dict(
     type='EncoderDecoder',
     pretrained=checkpoint,
