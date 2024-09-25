@@ -241,6 +241,7 @@ class DACS(UDADecorator):
                 fdist_mask = torch.any(gt_rescaled[..., None] == fdclasses, -1)
                 feat_dist = self.masked_feat_dist(feat[lay], feat_imnet[lay],
                                                   fdist_mask)
+                print("MY INFO: ", feat_dist)
                 self.debug_fdist_mask = fdist_mask
                 self.debug_gt_rescale = gt_rescaled
             else:
@@ -368,6 +369,8 @@ class DACS(UDADecorator):
         if self.enable_fdist:
             feat_loss, feat_log = self.calc_feat_dist(img, gt_semantic_seg,
                                                       src_feat)
+            print("MY INFO: ", feat_loss)
+            
             log_vars.update(add_prefix(feat_log, 'src'))
             feat_loss.backward()
             if self.print_grad_magnitude:

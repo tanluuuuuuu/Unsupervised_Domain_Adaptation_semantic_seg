@@ -368,7 +368,6 @@ class DACS(UDADecorator):
         if self.enable_fdist:
             feat_loss, feat_log = self.calc_feat_dist(img, gt_semantic_seg,
                                                       src_feat)
-            print("MY INFO: ", feat_loss)
             log_vars.update(add_prefix(feat_log, 'src'))
             feat_loss.backward()
             if self.print_grad_magnitude:
