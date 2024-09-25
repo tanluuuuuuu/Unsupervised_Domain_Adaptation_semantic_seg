@@ -61,10 +61,10 @@ def calc_grad_magnitude(grads, norm_type=2.0):
 
 
 @UDA.register_module()
-class DACS(UDADecorator):
+class DACS_META_PSLBL(UDADecorator):
 
     def __init__(self, **cfg):
-        super(DACS, self).__init__(**cfg)
+        super(DACS_META_PSLBL, self).__init__(**cfg)
         self.local_iter = 0
         self.max_iters = cfg['max_iters']
         self.source_only = cfg['source_only']
