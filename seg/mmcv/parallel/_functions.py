@@ -61,6 +61,7 @@ def get_input_device(input):
 def _get_stream(device: torch.device):
     """Get a background stream for copying between CPU and target device."""
     global _streams
+    print("MY INFO: ", device)
     if device.type == "cpu":
         return None
     device_mod = getattr(torch, device.type, None)
