@@ -43,14 +43,6 @@ from mmseg.models.utils.visualization import prepare_debug_out, subplotimg
 from mmseg.utils.utils import downscale_label_ratio
 
 
-def _params_equal(ema_model, model):
-    for ema_param, param in zip(ema_model.named_parameters(), model.named_parameters()):
-        if not torch.equal(ema_param[1].data, param[1].data):
-            # print("Difference in", ema_param[0])
-            return False
-    return True
-
-
 def calc_grad_magnitude(grads, norm_type=2.0):
     norm_type = float(norm_type)
     if norm_type == math.inf:
@@ -372,22 +364,19 @@ class DACS_META_PSLBL(UDADecorator):
             ema_forward_result = self.get_ema_model().forward_train(
                 img, img_metas, gt_semantic_seg, return_feat=False
             )
-            print("MY INFO ema_logits: ", ema_forward_result.keys())
-            print("MY INFO ema_logits: ", ema_logits)
-
-            ema_logits = self.get_ema_model().generate_pseudo_label(
-                target_img, target_img_metas
-            )
-            print(ema_logits.shape)
-            print("MY INFO ema_logits: ", ema_logits.keys())
-            print("MY INFO ema_logits: ", ema_logits)
+            print("MY INFO ema_forward_result: ", ema_forward_result.keys()) # dict_keys(['decode.loss_seg', 'decode.acc_seg'])
+            # print("MY INFO ema_logits: ", ema_logits)
 
             ema_logits = self.get_ema_model().generate_pseudo_label(
                 target_img, target_img_metas
             )
             pseudo_label, pseudo_weight = self.get_pseudo_label_and_weight(ema_logits)
+            print(ema_logits.shape)
+            print("MY INFO ema_logits: ", ema_logits.keys())
+            print("MY INFO ema_logits: ", ema_logits)
+            print("MY INFO pseudo_weight: ", pseudo_weight.shape)
             
-            ema_forward_result +=  pseudo_weight * pseudo_label
+            ema_forward_result['decode.loss_seg'] +=  pseudo_weight * pseudo_label
             ema_forward_result.backward()
 
         # Train on source images
