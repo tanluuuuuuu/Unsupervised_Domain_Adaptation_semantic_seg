@@ -99,7 +99,7 @@ class DACS_Dynamic_Masking(UDADecorator):
             self.ema_model = build_segmentor(ema_cfg)
         self.mic = None
         if self.enable_masking:
-            self.mask_ratio = cfg["mask_generator"]["mask_ratio"]
+            self.mask_ratio = cfg["mask_ratio"]
             self.local_iou = []
             self.mic = DynamicMaskingConsistencyModule(require_teacher=False, cfg=cfg)
         if self.enable_fdist:

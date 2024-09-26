@@ -212,7 +212,8 @@ uda = dict(
     mask_alpha='same',
     mask_pseudo_threshold='same',
     mask_lambda=1,
-    mask_generator=dict(type='block', mask_ratio=0.7, mask_block_size=64),
+    mask_ratio=0.7,
+    mask_generator=dict(type='block', mask_block_size=64),
     debug_img_interval=1000,
     print_grad_magnitude=False)
 use_ddp_wrapper = True
