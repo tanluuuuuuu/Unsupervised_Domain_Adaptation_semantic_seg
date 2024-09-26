@@ -43,7 +43,7 @@ from mmseg.models.utils.dacs_transforms import (
 )
 from mmseg.models.utils.visualization import prepare_debug_out, subplotimg
 from mmseg.utils.utils import downscale_label_ratio
-
+from mmseg.ops import resize
 
 def _params_equal(ema_model, model):
     for ema_param, param in zip(ema_model.named_parameters(), model.named_parameters()):
@@ -311,6 +311,25 @@ class DACS_Dynamic_Masking(UDADecorator):
             pseudo_weight *= valid_pseudo_mask.squeeze(1)
         return pseudo_weight
 
+    def calculate_iou(self, seg_logit, seg_label):
+        print("MY INFO: seg_logit \n", seg_logit.shape)
+        print("MY INFO: seg_label \n", seg_label.shape)
+
+        seg_logit = resize(
+            input=seg_logit,
+            size=seg_label.shape[2:],
+            mode='bilinear',
+            align_corners=False)
+        
+        seg_label = seg_label.squeeze(1)
+        
+        print("MY INFO: gt_semantic_seg \n", seg_logit.shape)
+        print("MY INFO: seg_label \n", seg_label.shape)
+
+        assert seg_label.shape == seg_logit.shape
+
+
+
     def forward_train(
         self,
         img,
@@ -373,11 +392,11 @@ class DACS_Dynamic_Masking(UDADecorator):
             img, img_metas, gt_semantic_seg, return_feat=True, return_logits=True
         )
 
-        # Lấy feature, feature j??
         src_logits = clean_losses.pop("decode.logits")
-        print("MY INFO: src_logits \n", src_logits.shape)
-        print("MY INFO: gt_semantic_seg \n", gt_semantic_seg.shape)
-        print("MY INFO: gt_semantic_seg \n", gt_semantic_seg)
+        # print("MY INFO: src_logits \n", src_logits.shape)
+        # print("MY INFO: gt_semantic_seg \n", gt_semantic_seg.shape)
+        # print("MY INFO: gt_semantic_seg \n", gt_semantic_seg)
+        iou = self.calculate_iou(seg_logit=src_logits, seg_label=gt_semantic_seg)
 
         src_feat = clean_losses.pop("features")
         seg_debug["Source"] = self.get_model().debug_output
