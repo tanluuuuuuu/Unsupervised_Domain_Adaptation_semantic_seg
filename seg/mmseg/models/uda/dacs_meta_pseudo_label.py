@@ -322,8 +322,6 @@ class DACS_META_PSLBL(UDADecorator):
         Returns:
             dict[str, Tensor]: a dictionary of loss components
         """
-        print("MY INFO: forward train called")
-
         log_vars = {}
         batch_size = img.shape[0]
         # print("MY INFO batch_size: ", batch_size) == 2
@@ -471,8 +469,10 @@ class DACS_META_PSLBL(UDADecorator):
             # Apply META PSEUDO LABEL
             fused = torch.mean((pseudo_weight * pseudo_label).sum(dim=-1)) 
             ema_forward_result['decode.loss_seg'] += fused
-            print("MY INFO: PSEUDO LABEL CALCULATED")
+            
+            ema_forward_result = add_prefix(ema_forward_result, "teacher")
             ema_forward_loss, ema_forward_log_vars = self._parse_losses(ema_forward_result)
+            log_vars.update(ema_forward_log_vars)
             # ema_forward_log_vars = OrderedDict([('decode.loss_seg', 2.874251365661621), ('decode.acc_seg', 9.85565185546875), ('loss', 2.874251365661621)])
             ema_forward_loss.backward()
 
