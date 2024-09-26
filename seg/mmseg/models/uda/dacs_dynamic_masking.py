@@ -312,22 +312,34 @@ class DACS_Dynamic_Masking(UDADecorator):
         return pseudo_weight
 
     def calculate_iou(self, seg_logit, seg_label):
-        print("MY INFO: seg_logit \n", seg_logit.shape)
-        print("MY INFO: seg_label \n", seg_label.shape)
-
         seg_logit = resize(
             input=seg_logit,
             size=seg_label.shape[2:],
             mode='bilinear',
             align_corners=False)
-        
         seg_label = seg_label.squeeze(1)
         
-        print("MY INFO: gt_semantic_seg \n", seg_logit.shape)
-        print("MY INFO: seg_label \n", seg_label.shape)
-
-        assert seg_label.shape == seg_logit.shape
-
+        preds = torch.argmax(seg_logit, dim=1)  # shape [B, H, W]
+        
+        ious = []
+        for cls in range(19):
+            # True positives (intersection)
+            intersection = ((preds == cls) & (seg_label == cls)).float().sum()
+            # Union (true positives + false positives + false negatives)
+            union = ((preds == cls) | (seg_label == cls)).float().sum()
+            if union == 0:
+                # If there is no union, IoU for that class is not defined, skip it
+                continue
+            # IoU for the class
+            iou = intersection / union
+            ious.append(iou)
+        
+        # Compute mean IoU across all classes
+        if len(ious) == 0:
+            return 0.0  # No valid classes
+        mIoU = torch.mean(torch.tensor(ious))
+        
+        return mIoU.item()
 
 
     def forward_train(
@@ -397,7 +409,7 @@ class DACS_Dynamic_Masking(UDADecorator):
         # print("MY INFO: gt_semantic_seg \n", gt_semantic_seg.shape)
         # print("MY INFO: gt_semantic_seg \n", gt_semantic_seg)
         iou = self.calculate_iou(seg_logit=src_logits, seg_label=gt_semantic_seg)
-
+        print("IOU: ", iou)
         src_feat = clean_losses.pop("features")
         seg_debug["Source"] = self.get_model().debug_output
 
