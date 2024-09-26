@@ -364,17 +364,20 @@ class DACS_META_PSLBL(UDADecorator):
             ema_forward_result = self.get_ema_model().forward_train(
                 img, img_metas, gt_semantic_seg, return_feat=False
             )
-            print("MY INFO ema_forward_result: ", ema_forward_result.keys()) # dict_keys(['decode.loss_seg', 'decode.acc_seg'])
-            # print("MY INFO ema_logits: ", ema_logits)
+            # print("MY INFO ema_forward_result: ", ema_forward_result.keys()) # dict_keys(['decode.loss_seg', 'decode.acc_seg'])
 
             ema_logits = self.get_ema_model().generate_pseudo_label(
                 target_img, target_img_metas
             )
             pseudo_label, pseudo_weight = self.get_pseudo_label_and_weight(ema_logits)
-            print(ema_logits.shape)
-            print("MY INFO ema_logits: ", ema_logits.keys())
-            print("MY INFO ema_logits: ", ema_logits)
+            print("MY INFO pseudo_weight 1: ", pseudo_weight)
+
+            pseudo_weight = self.filter_valid_pseudo_region(
+                pseudo_weight, valid_pseudo_mask
+            )
+            # ema_logits.shape = torch.Size([2, 19, 512, 512])
             print("MY INFO pseudo_weight: ", pseudo_weight.shape)
+            print("MY INFO pseudo_weight 2: ", pseudo_weight)
             
             ema_forward_result['decode.loss_seg'] +=  pseudo_weight * pseudo_label
             ema_forward_result.backward()
