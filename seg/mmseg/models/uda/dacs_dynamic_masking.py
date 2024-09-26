@@ -505,6 +505,7 @@ class DACS_Dynamic_Masking(UDADecorator):
 
             if (len(self.local_iou) % 100 == 0):
                 mean_iou = np.mean(self.local_iou)
+                print("mean_iou: ", mean_iou)
                 self.local_iou = []
                 if (0.3 <= mean_iou and mean_iou <= 0.85):
                     self.mask_ratio = mean_iou
