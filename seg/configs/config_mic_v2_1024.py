@@ -48,34 +48,34 @@ dataset_type = 'CityscapesDataset'
 data_root = '/kaggle/input/gtav-daformer'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
-crop_size = (512, 512)
+crop_size = (1024, 1024)
 gta_train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
-    dict(type='Resize', img_scale=(1280, 720)),
-    dict(type='RandomCrop', crop_size=(512, 512), cat_max_ratio=0.75),
+    dict(type='Resize', img_scale=(2560, 1440)),
+    dict(type='RandomCrop', crop_size=(1024, 1024), cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
     dict(
         type='Normalize',
         mean=[123.675, 116.28, 103.53],
         std=[58.395, 57.12, 57.375],
         to_rgb=True),
-    dict(type='Pad', size=(512, 512), pad_val=0, seg_pad_val=255),
+    dict(type='Pad', size=(1024, 1024), pad_val=0, seg_pad_val=255),
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_semantic_seg'])
 ]
 cityscapes_train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
-    dict(type='Resize', img_scale=(1024, 512)),
-    dict(type='RandomCrop', crop_size=(512, 512)),
+    dict(type='Resize', img_scale=(2048, 1024)),
+    dict(type='RandomCrop', crop_size=(1024, 1024)),
     dict(type='RandomFlip', prob=0.5),
     dict(
         type='Normalize',
         mean=[123.675, 116.28, 103.53],
         std=[58.395, 57.12, 57.375],
         to_rgb=True),
-    dict(type='Pad', size=(512, 512), pad_val=0, seg_pad_val=255),
+    dict(type='Pad', size=(1024, 1024), pad_val=0, seg_pad_val=255),
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_semantic_seg'])
 ]
@@ -83,7 +83,7 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=(1024, 512),
+        img_scale=(2048, 1024),
         flip=False,
         transforms=[
             dict(type='Resize', keep_ratio=True),
@@ -110,10 +110,10 @@ data = dict(
             pipeline=[
                 dict(type='LoadImageFromFile'),
                 dict(type='LoadAnnotations'),
-                dict(type='Resize', img_scale=(1280, 720)),
+                dict(type='Resize', img_scale=(2560, 1440)),
                 dict(
                     type='RandomCrop',
-                    crop_size=(512, 512),
+                    crop_size=(1024, 1024),
                     cat_max_ratio=0.75),
                 dict(type='RandomFlip', prob=0.5),
                 dict(
@@ -121,7 +121,7 @@ data = dict(
                     mean=[123.675, 116.28, 103.53],
                     std=[58.395, 57.12, 57.375],
                     to_rgb=True),
-                dict(type='Pad', size=(512, 512), pad_val=0, seg_pad_val=255),
+                dict(type='Pad', size=(1024, 1024), pad_val=0, seg_pad_val=255),
                 dict(type='DefaultFormatBundle'),
                 dict(type='Collect', keys=['img', 'gt_semantic_seg'])
             ]),
@@ -133,15 +133,15 @@ data = dict(
             pipeline=[
                 dict(type='LoadImageFromFile'),
                 dict(type='LoadAnnotations'),
-                dict(type='Resize', img_scale=(1024, 512)),
-                dict(type='RandomCrop', crop_size=(512, 512)),
+                dict(type='Resize', img_scale=(2048, 1024)),
+                dict(type='RandomCrop', crop_size=(1024, 1024)),
                 dict(type='RandomFlip', prob=0.5),
                 dict(
                     type='Normalize',
                     mean=[123.675, 116.28, 103.53],
                     std=[58.395, 57.12, 57.375],
                     to_rgb=True),
-                dict(type='Pad', size=(512, 512), pad_val=0, seg_pad_val=255),
+                dict(type='Pad', size=(1024, 1024), pad_val=0, seg_pad_val=255),
                 dict(type='DefaultFormatBundle'),
                 dict(type='Collect', keys=['img', 'gt_semantic_seg'])
             ],
@@ -157,7 +157,7 @@ data = dict(
             dict(type='LoadImageFromFile'),
             dict(
                 type='MultiScaleFlipAug',
-                img_scale=(1024, 512),
+                img_scale=(2048, 1024),
                 flip=False,
                 transforms=[
                     dict(type='Resize', keep_ratio=True),
@@ -180,7 +180,7 @@ data = dict(
             dict(type='LoadImageFromFile'),
             dict(
                 type='MultiScaleFlipAug',
-                img_scale=(1024, 512),
+                img_scale=(2048, 1024),
                 flip=False,
                 transforms=[
                     dict(type='Resize', keep_ratio=True),
@@ -195,7 +195,7 @@ data = dict(
                 ])
         ]))
 uda = dict(
-    type='DACS_META_PSLBL',
+    type='DACS',
     source_only=False,
     alpha=0.999,
     pseudo_threshold=0.968,
@@ -238,9 +238,9 @@ lr_config = dict(
 seed = 2
 n_gpus = 1
 gpu_model = 'NVIDIATITANRTX'
-runner = dict(type='IterBasedRunner', max_iters=2000)
-checkpoint_config = dict(by_epoch=False, interval=2000, max_keep_ckpts=1)
-evaluation = dict(interval=500, metric='mIoU')
+runner = dict(type='IterBasedRunner', max_iters=200)
+checkpoint_config = dict(by_epoch=False, interval=100, max_keep_ckpts=1)
+evaluation = dict(interval=200, metric='mIoU')
 name = "anyName"
 exp = 'basic'
 name_dataset = 'gta2cityscapes_512x512'

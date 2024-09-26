@@ -469,7 +469,6 @@ class DACS_META_PSLBL(UDADecorator):
             # Apply META PSEUDO LABEL
             fused = torch.mean((pseudo_weight * pseudo_label).sum(dim=-1)) 
             ema_forward_result['decode.loss_seg'] += fused
-            
             ema_forward_result = add_prefix(ema_forward_result, "teacher")
             ema_forward_loss, ema_forward_log_vars = self._parse_losses(ema_forward_result)
             log_vars.update(ema_forward_log_vars)
