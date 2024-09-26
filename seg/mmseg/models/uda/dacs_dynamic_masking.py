@@ -404,12 +404,6 @@ class DACS_Dynamic_Masking(UDADecorator):
             img, img_metas, gt_semantic_seg, return_feat=True, return_logits=True
         )
 
-        src_logits = clean_losses.pop("decode.logits")
-        # print("MY INFO: src_logits \n", src_logits.shape)
-        # print("MY INFO: gt_semantic_seg \n", gt_semantic_seg.shape)
-        # print("MY INFO: gt_semantic_seg \n", gt_semantic_seg)
-        iou = self.calculate_iou(seg_logit=src_logits, seg_label=gt_semantic_seg)
-        print("IOU: ", iou)
         src_feat = clean_losses.pop("features")
         seg_debug["Source"] = self.get_model().debug_output
 
@@ -511,6 +505,19 @@ class DACS_Dynamic_Masking(UDADecorator):
 
         # Masked Training
         if self.enable_masking and self.mask_mode.startswith("separate"):
+            
+            src_logits = clean_losses.pop("decode.logits")
+            iou = self.calculate_iou(seg_logit=src_logits, seg_label=gt_semantic_seg)
+            self.local_iou.append(iou)
+
+            if (self.local_iter % 100 == 0):
+                mean_iou = np.mean(self.local_iou)
+                self.local_iou = []
+                if (30 <= mean_iou and mean_iou <= 80):
+                    self.mask_ratio = mean_iou
+                    log_vars.update({'mask_ratio': self.mask_ratio})
+                    print("NEW MASK RATIO: ", self.mask_ratio)
+            
             masked_loss = self.mic(
                 self.get_model(),
                 img,
