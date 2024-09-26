@@ -374,8 +374,7 @@ class DACS_Dynamic_Masking(UDADecorator):
         )
 
         # Lấy feature, feature j??
-        print(clean_losses.keys())
-        src_logits = clean_losses.pop("logits")
+        src_logits = clean_losses.pop("decode.logits")
         print("MY INFO: src_logits \n", src_logits.shape)
         print("MY INFO: gt_semantic_seg \n", gt_semantic_seg.shape)
         print("MY INFO: gt_semantic_seg \n", gt_semantic_seg)
