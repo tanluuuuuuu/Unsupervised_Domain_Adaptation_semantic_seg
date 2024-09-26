@@ -503,10 +503,10 @@ class DACS_Dynamic_Masking(UDADecorator):
             iou = self.calculate_iou(seg_logit=src_logits, seg_label=gt_semantic_seg)
             self.local_iou.append(iou)
 
-            if (self.local_iter % 100 == 0):
+            if (len(self.local_iou) % 100 == 0):
                 mean_iou = np.mean(self.local_iou)
                 self.local_iou = []
-                if (30 <= mean_iou and mean_iou <= 80):
+                if (0.3 <= mean_iou and mean_iou <= 0.85):
                     self.mask_ratio = mean_iou
 
             log_vars.update({'mask_ratio': self.mask_ratio})
