@@ -104,8 +104,9 @@ class DACS_META_PSLBL(UDADecorator):
     def _init_ema_weights(self):
         if self.source_only:
             return
-        for param in self.get_ema_model().parameters():
-            param.detach_()
+        # Comment this code to allow ema training
+        # for param in self.get_ema_model().parameters():
+            # param.detach_()
         mp = list(self.get_model().parameters())
         mcp = list(self.get_ema_model().parameters())
         for i in range(0, len(mp)):
@@ -445,7 +446,6 @@ class DACS_META_PSLBL(UDADecorator):
         pseudo_label, pseudo_weight = None, None
         if not self.source_only:
             # Generate pseudo-label
-            # Cần coi kiến trúc của self.get_ema_model()
             for m in self.get_ema_model().modules():
                 if isinstance(m, _DropoutNd):
                     m.training = False
