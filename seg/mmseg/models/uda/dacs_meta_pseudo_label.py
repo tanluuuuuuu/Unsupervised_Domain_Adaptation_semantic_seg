@@ -370,16 +370,17 @@ class DACS_META_PSLBL(UDADecorator):
                 target_img, target_img_metas
             )
             pseudo_label, pseudo_weight = self.get_pseudo_label_and_weight(ema_logits)
-            print("MY INFO pseudo_weight 1: ", pseudo_weight)
-
             pseudo_weight = self.filter_valid_pseudo_region(
                 pseudo_weight, valid_pseudo_mask
             )
             # ema_logits.shape = torch.Size([2, 19, 512, 512])
-            print("MY INFO pseudo_weight: ", pseudo_weight.shape)
-            print("MY INFO pseudo_weight 2: ", pseudo_weight)
-            
-            ema_forward_result['decode.loss_seg'] +=  pseudo_weight * pseudo_label
+            # pseudo_weight.shape = torch.Size([2, 512, 512])
+            print("MY INFO pseudo_label: ", pseudo_label.shape)
+    
+            fused = pseudo_weight * pseudo_label
+            print("MY INFO fused: ", fused.shape)
+
+            ema_forward_result['decode.loss_seg'] += pseudo_weight * pseudo_label
             ema_forward_result.backward()
 
         # Train on source images
