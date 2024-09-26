@@ -20,22 +20,21 @@ def build_mask_generator(cfg):
 
 class BlockMaskGenerator:
 
-    def __init__(self, mask_ratio, mask_block_size):
-        self.mask_ratio = mask_ratio
+    def __init__(self, mask_block_size):
         self.mask_block_size = mask_block_size
 
     @torch.no_grad()
-    def generate_mask(self, imgs):
+    def generate_mask(self, imgs, mask_ratio):
         B, _, H, W = imgs.shape
 
         mshape = B, 1, round(H / self.mask_block_size), round(
             W / self.mask_block_size)
         input_mask = torch.rand(mshape, device=imgs.device)
-        input_mask = (input_mask > self.mask_ratio).float()
+        input_mask = (input_mask > mask_ratio).float()
         input_mask = resize(input_mask, size=(H, W))
         return input_mask
 
     @torch.no_grad()
-    def mask_image(self, imgs):
-        input_mask = self.generate_mask(imgs)
+    def mask_image(self, imgs, mask_ratio):
+        input_mask = self.generate_mask(imgs, mask_ratio)
         return imgs * input_mask
