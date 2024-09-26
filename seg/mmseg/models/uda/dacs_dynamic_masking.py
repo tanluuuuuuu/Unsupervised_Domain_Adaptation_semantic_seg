@@ -515,9 +515,8 @@ class DACS_Dynamic_Masking(UDADecorator):
                 self.local_iou = []
                 if (30 <= mean_iou and mean_iou <= 80):
                     self.mask_ratio = mean_iou
-                    log_vars.update({'mask_ratio': self.mask_ratio})
-                    print("NEW MASK RATIO: ", self.mask_ratio)
-            
+
+            log_vars.update({'mask_ratio': self.mask_ratio})
             masked_loss = self.mic(
                 self.get_model(),
                 img,
