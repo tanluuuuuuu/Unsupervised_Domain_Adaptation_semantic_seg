@@ -378,9 +378,13 @@ class DACS_META_PSLBL(UDADecorator):
             # print("MY INFO pseudo_label: ", pseudo_label.shape)
             # MY INFO pseudo_label:  torch.Size([2, 512, 512])
 
-            fused = (pseudo_weight * pseudo_label).sum(dim=-1)
-            print("MY INFO fused: ", fused.shape)
+            fused = (pseudo_weight * pseudo_label)
             # MY INFO fused:  pseudo_weight * pseudo_label = torch.Size([2, 512, 512])
+            fused = fused.sum(dim=-1)
+            print("MY INFO fused: ", fused.shape)
+
+            fused = torch.mean(fused)
+            print("MY INFO fused: ", fused)
 
             # print("MY INFO decode.loss_seg: ", ema_forward_result['decode.loss_seg'])
             # print("MY INFO decode.loss_seg: ", ema_forward_result['decode.loss_seg'].shape)
