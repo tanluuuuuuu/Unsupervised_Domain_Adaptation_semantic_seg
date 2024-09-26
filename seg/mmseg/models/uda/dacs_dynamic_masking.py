@@ -264,14 +264,11 @@ class DACS_Dynamic_Masking(UDADecorator):
                 feat_dist = self.masked_feat_dist(
                     feat[lay], feat_imnet[lay], fdist_mask
                 )
-                # print("MY INFO: ", feat_dist)
-                # MY INFO:  tensor(32.1886, device='cuda:0', grad_fn=<MeanBackward0>)
                 self.debug_fdist_mask = fdist_mask
                 self.debug_gt_rescale = gt_rescaled
             else:
                 feat_dist = self.masked_feat_dist(feat[lay], feat_imnet[lay])
         feat_dist = self.fdist_lambda * feat_dist
-        # print("MY INFO: ", feat_dist)
         feat_loss, feat_log = self._parse_losses({"loss_imnet_feat_dist": feat_dist})
         feat_log.pop("loss", None)
         return feat_loss, feat_log
@@ -424,13 +421,9 @@ class DACS_Dynamic_Masking(UDADecorator):
         # ImageNet feature distance
         if self.enable_fdist:
             feat_loss, feat_log = self.calc_feat_dist(img, gt_semantic_seg, src_feat)
-            print("MY INFO feat_loss: ", feat_loss)
-            # print("MY INFO: ", feat_log)
-
-            # MY INFO:  tensor(32.1886, device='cuda:0', grad_fn=<MeanBackward0>)
+            # tensor(32.1886, device='cuda:0', grad_fn=<MeanBackward0>)
 
             log_vars.update(add_prefix(feat_log, "src"))
-            print("MY INFO log_vars: ", log_vars)
             feat_loss.backward()
             if self.print_grad_magnitude:
                 params = self.get_model().backbone.parameters()
