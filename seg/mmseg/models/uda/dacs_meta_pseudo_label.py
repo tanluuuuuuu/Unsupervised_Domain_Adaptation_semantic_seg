@@ -380,17 +380,20 @@ class DACS_META_PSLBL(UDADecorator):
 
             fused = (pseudo_weight * pseudo_label)
             # MY INFO fused:  pseudo_weight * pseudo_label = torch.Size([2, 512, 512])
+            
             fused = fused.sum(dim=-1)
-            print("MY INFO fused: ", fused.shape)
+            # MY INFO fused:  torch.Size([2, 512])
+            # print("MY INFO fused: ", fused.shape)
 
             fused = torch.mean(fused)
-            print("MY INFO fused: ", fused)
+            # print("MY INFO fused: ", fused)
+            # MY INFO fused:  tensor(0., device='cuda:0')
 
             # print("MY INFO decode.loss_seg: ", ema_forward_result['decode.loss_seg'])
             # print("MY INFO decode.loss_seg: ", ema_forward_result['decode.loss_seg'].shape)
             # MY INFO decode.loss_seg:  tensor(2.8743, device='cuda:0')
             # MY INFO decode.loss_seg:  torch.Size([])
-            ema_forward_result['decode.loss_seg'] += pseudo_weight * pseudo_label
+            ema_forward_result['decode.loss_seg'] += fused
             ema_forward_result.backward()
 
         # Train on source images
