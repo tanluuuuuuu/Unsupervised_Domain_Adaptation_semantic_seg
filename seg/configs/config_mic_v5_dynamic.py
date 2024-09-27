@@ -241,7 +241,7 @@ n_gpus = 1
 gpu_model = 'NVIDIATITANRTX'
 runner = dict(type='IterBasedRunner', max_iters=10000)
 checkpoint_config = dict(by_epoch=False, interval=2000, max_keep_ckpts=1)
-evaluation = dict(interval=100, metric='mIoU')
+evaluation = dict(interval=1000, metric='mIoU')
 name = "anyName"
 exp = 'basic'
 name_dataset = 'gta2cityscapes_512x512'
