@@ -106,7 +106,7 @@ class DACS_META_PSLBL(UDADecorator):
             return
         # Comment this code to allow ema training
         # for param in self.get_ema_model().parameters():
-            # param.detach_()
+        # param.detach_()
         mp = list(self.get_model().parameters())
         mcp = list(self.get_ema_model().parameters())
         for i in range(0, len(mp)):
@@ -339,7 +339,7 @@ class DACS_META_PSLBL(UDADecorator):
             # print("MY INFO updated ema ", self.local_iter)
             # assert not _params_equal(self.get_ema_model(), self.get_model())
             # assert self.get_ema_model().training
-            
+
         if self.mic is not None:
             self.mic.update_weights(self.get_model(), self.local_iter)
 
@@ -363,43 +363,6 @@ class DACS_META_PSLBL(UDADecorator):
             ema_forward_result = self.get_ema_model().forward_train(
                 img, img_metas, gt_semantic_seg, return_feat=False
             )
-            # print("MY INFO ema_forward_result: ", ema_forward_result.keys()) # dict_keys(['decode.loss_seg', 'decode.acc_seg'])
-
-            # ema_logits = self.get_ema_model().generate_pseudo_label(
-            #     target_img, target_img_metas
-            # )
-
-            # pseudo_label, pseudo_weight = self.get_pseudo_label_and_weight(ema_logits)
-            # pseudo_weight = self.filter_valid_pseudo_region(
-            #     pseudo_weight, valid_pseudo_mask
-            # )
-            # ema_logits.shape = torch.Size([2, 19, 512, 512])
-            # pseudo_weight.shape = torch.Size([2, 512, 512])
-            # print("MY INFO pseudo_label: ", pseudo_label.shape)
-            # MY INFO pseudo_label:  torch.Size([2, 512, 512])
-
-            # fused = (pseudo_weight * pseudo_label)
-            # MY INFO fused:  pseudo_weight * pseudo_label = torch.Size([2, 512, 512])
-
-            # fused = fused.sum(dim=-1)
-            # MY INFO fused:  torch.Size([2, 512])
-            # print("MY INFO fused: ", fused.shape)
-
-            # fused = torch.mean(fused)
-            # print("MY INFO fused: ", fused)
-            # MY INFO fused:  tensor(0., device='cuda:0')
-
-            # print("MY INFO decode.loss_seg: ", ema_forward_result['decode.loss_seg'])
-            # print("MY INFO decode.loss_seg: ", ema_forward_result['decode.loss_seg'].shape)
-            # MY INFO decode.loss_seg:  tensor(2.8743, device='cuda:0')
-            # MY INFO decode.loss_seg:  torch.Size([])
-            # ema_forward_result['decode.loss_seg'] += fused
-
-            # ema_forward_loss, ema_forward_log_vars = self._parse_losses(ema_forward_result)
-            # print(ema_forward_log_vars)
-            # OrderedDict([('decode.loss_seg', 2.874251365661621), ('decode.acc_seg', 9.85565185546875), ('loss', 2.874251365661621)])
-
-            # ema_forward_loss.backward()
 
         # Train on source images
         # What img?
@@ -453,11 +416,9 @@ class DACS_META_PSLBL(UDADecorator):
             ema_logits = self.get_ema_model().generate_pseudo_label(
                 target_img, target_img_metas
             )
-
             seg_debug["Target"] = self.get_ema_model().debug_output
 
             pseudo_label, pseudo_weight = self.get_pseudo_label_and_weight(ema_logits)
-
             del ema_logits
 
             pseudo_weight = self.filter_valid_pseudo_region(
@@ -467,10 +428,12 @@ class DACS_META_PSLBL(UDADecorator):
             gt_pixel_weight = torch.ones((pseudo_weight.shape), device=dev)
 
             # Apply META PSEUDO LABEL
-            fused = torch.mean((pseudo_weight * pseudo_label).sum(dim=-1)) 
-            ema_forward_result['decode.loss_seg'] += fused
+            fused = torch.mean((pseudo_weight * pseudo_label).sum(dim=-1))
+            ema_forward_result["decode.loss_seg"] += fused
             ema_forward_result = add_prefix(ema_forward_result, "teacher")
-            ema_forward_loss, ema_forward_log_vars = self._parse_losses(ema_forward_result)
+            ema_forward_loss, ema_forward_log_vars = self._parse_losses(
+                ema_forward_result
+            )
             log_vars.update(ema_forward_log_vars)
             # ema_forward_log_vars = OrderedDict([('decode.loss_seg', 2.874251365661621), ('decode.acc_seg', 9.85565185546875), ('loss', 2.874251365661621)])
             ema_forward_loss.backward()
