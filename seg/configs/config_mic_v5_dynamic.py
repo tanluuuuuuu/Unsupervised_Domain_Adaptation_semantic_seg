@@ -4,13 +4,13 @@ log_config = dict(
     hooks=[dict(type='TextLoggerHook', by_epoch=False)])
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-load_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240927_0634_anyName_9d46c/iter_4000.pth"
-resume_from = "/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240927_0634_anyName_9d46c/iter_4000.pth"
+load_from = "/kaggle/input/iter_6000/pytorch/default/1/iter_6000.pth"
+resume_from = "/kaggle/input/iter_6000/pytorch/default/1/iter_6000.pth"
 workflow = [('train', 1)]
 cudnn_benchmark = True
 norm_cfg = dict(type='BN', requires_grad=True)
 find_unused_parameters = True
-checkpoint = '/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/work_dirs/local-basic/240927_0634_anyName_9d46c/iter_4000.pth'
+checkpoint = '/kaggle/input/iter_6000/pytorch/default/1/iter_6000.pth'
 model = dict(
     type='EncoderDecoder',
     pretrained=checkpoint,
@@ -239,9 +239,9 @@ lr_config = dict(
 seed = 2
 n_gpus = 1
 gpu_model = 'NVIDIATITANRTX'
-runner = dict(type='IterBasedRunner', max_iters=10000)
+runner = dict(type='IterBasedRunner', max_iters=25000)
 checkpoint_config = dict(by_epoch=False, interval=2000, max_keep_ckpts=1)
-evaluation = dict(interval=1500, metric='mIoU')
+evaluation = dict(interval=2000, metric='mIoU')
 name = "anyName"
 exp = 'basic'
 name_dataset = 'gta2cityscapes_512x512'
