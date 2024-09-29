@@ -502,6 +502,7 @@ class DACS_Dynamic_Masking(UDADecorator):
             src_logits = clean_losses.pop("decode.logits")
             iou = self.calculate_iou(seg_logit=src_logits, seg_label=gt_semantic_seg)
             self.local_iou.append(iou)
+            del src_logits, clean_losses
 
             if (len(self.local_iou) % 100 == 0):
                 mean_iou = np.mean(self.local_iou)
