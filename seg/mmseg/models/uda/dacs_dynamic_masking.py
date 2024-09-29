@@ -509,7 +509,7 @@ class DACS_Dynamic_Masking(UDADecorator):
                 print("mean_iou: ", mean_iou)
                 self.local_iou.clear()
                 if (0.3 <= mean_iou and mean_iou <= 0.85):
-                    self.mask_ratio = mean_iou
+                    self.mask_ratio = max(self.mask_ratio, mean_iou) 
 
             log_vars.update({'mask_ratio': self.mask_ratio})
             masked_loss = self.mic(
