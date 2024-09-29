@@ -4,13 +4,13 @@ log_config = dict(
     hooks=[dict(type='TextLoggerHook', by_epoch=False)])
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-load_from = "/kaggle/input/iter_6000/pytorch/default/1/iter_6000.pth"
-resume_from = "/kaggle/input/iter_6000/pytorch/default/1/iter_6000.pth"
+load_from = "/kaggle/input/iter-8000/pytorch/default/1/iter_8000.pth"
+resume_from = "/kaggle/input/iter-8000/pytorch/default/1/iter_8000.pth"
 workflow = [('train', 1)]
 cudnn_benchmark = True
 norm_cfg = dict(type='BN', requires_grad=True)
 find_unused_parameters = True
-checkpoint = '/kaggle/input/iter_6000/pytorch/default/1/iter_6000.pth'
+checkpoint = '/kaggle/input/iter-8000/pytorch/default/1/iter_8000.pth'
 model = dict(
     type='EncoderDecoder',
     pretrained=checkpoint,
@@ -240,7 +240,7 @@ seed = 2
 n_gpus = 1
 gpu_model = 'NVIDIATITANRTX'
 runner = dict(type='IterBasedRunner', max_iters=25000)
-checkpoint_config = dict(by_epoch=False, interval=2000, max_keep_ckpts=1)
+checkpoint_config = dict(by_epoch=False, interval=1000, max_keep_ckpts=1)
 evaluation = dict(interval=2000, metric='mIoU')
 name = "anyName"
 exp = 'basic'
