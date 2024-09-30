@@ -230,6 +230,7 @@ def main():
 
     print("OUPUTS DONE")
     print(len(outputs)) # 1525
+    # print(type(outputs[0]))
 
     rank, _ = get_dist_info()
     if rank == 0:

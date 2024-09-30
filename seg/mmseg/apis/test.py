@@ -97,7 +97,7 @@ def single_gpu_test(model,
                         show=show,
                         out_file=out_file,
                         opacity=opacity)
-
+        print(type(result))
         if isinstance(result, list):
             if efficient_test:
                 result = [np2tmp(_, tmpdir='.efficient_test') for _ in result]
