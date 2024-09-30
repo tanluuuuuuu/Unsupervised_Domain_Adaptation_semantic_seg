@@ -174,8 +174,8 @@ data = dict(
     test=dict(
         type='CityscapesDataset',
         data_root='/kaggle/input/gtav-daformer/cityscapes',
-        img_dir='leftImg8bit/val',
-        ann_dir='gtFine/val',
+        img_dir='leftImg8bit/test',
+        ann_dir='gtFine/test',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
