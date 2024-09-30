@@ -183,7 +183,6 @@ def main():
     # build the dataloader
     # TODO: support multiple images per gpu (only minor changes are needed)
     dataset = build_dataset(cfg.data.test)
-    print(dataset)
     data_loader = build_dataloader(
         dataset,
         samples_per_gpu=1,
@@ -228,6 +227,9 @@ def main():
             broadcast_buffers=False)
         outputs = multi_gpu_test(model, data_loader, args.tmpdir,
                                  args.gpu_collect, efficient_test)
+        
+    del model
+
     print("OUPUTS DONE")
     print(len(outputs)) # 1525
     print(outputs[0].shape) # (1024, 2048)
