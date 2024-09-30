@@ -17,6 +17,7 @@ from mmseg.core import eval_metrics
 from mmseg.utils import get_root_logger
 from .builder import DATASETS
 from .pipelines import Compose
+from mmseg.ops import resize
 
 
 @DATASETS.register_module()
@@ -243,6 +244,11 @@ class CustomDataset(Dataset):
             else:
                 gt_seg_map = mmcv.imread(
                     seg_map, flag='unchanged', backend='pillow')
+                out = resize(
+                    input=out,
+                    size=(1024, 512),
+                    mode='bilinear',
+                    align_corners=False)
             gt_seg_maps.append(gt_seg_map)
         return gt_seg_maps
 
