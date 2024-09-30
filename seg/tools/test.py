@@ -227,12 +227,10 @@ def main():
             broadcast_buffers=False)
         outputs = multi_gpu_test(model, data_loader, args.tmpdir,
                                  args.gpu_collect, efficient_test)
-        
-    del model
 
     print("OUPUTS DONE")
     print(len(outputs)) # 1525
-    print(outputs[0].shape) # (1024, 2048)
+    print(outputs[0]) # (1024, 2048)
 
     rank, _ = get_dist_info()
     if rank == 0:
