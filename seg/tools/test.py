@@ -189,7 +189,7 @@ def main():
         workers_per_gpu=cfg.data.workers_per_gpu,
         dist=distributed,
         shuffle=False)
-    img, label = next(data_loader)
+    img, label = data_loader[0]
     print(img)
     print(label)
 
