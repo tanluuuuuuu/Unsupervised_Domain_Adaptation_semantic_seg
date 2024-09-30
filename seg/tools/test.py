@@ -189,9 +189,6 @@ def main():
         workers_per_gpu=cfg.data.workers_per_gpu,
         dist=distributed,
         shuffle=False)
-    img, label = data_loader[0]
-    print(img)
-    print(label)
 
     # build the model and load checkpoint
     cfg.model.train_cfg = None

@@ -63,6 +63,8 @@ def single_gpu_test(model,
     if efficient_test:
         mmcv.mkdir_or_exist('.efficient_test')
     for i, data in enumerate(data_loader):
+        print(data)
+        break
         with torch.no_grad():
             result = model(return_loss=False, **data)
 
