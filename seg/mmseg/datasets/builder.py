@@ -14,25 +14,27 @@ from mmcv.runner import get_dist_info
 from mmcv.utils import Registry, build_from_cfg
 from torch.utils.data import DataLoader, DistributedSampler
 
-if platform.system() != 'Windows':
+if platform.system() != "Windows":
     # https://github.com/pytorch/pytorch/issues/973
     import resource
+
     rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
     base_soft_limit = rlimit[0]
     hard_limit = rlimit[1]
     soft_limit = min(max(4096, base_soft_limit), hard_limit)
     resource.setrlimit(resource.RLIMIT_NOFILE, (soft_limit, hard_limit))
 
-DATASETS = Registry('dataset')
-PIPELINES = Registry('pipeline')
+DATASETS = Registry("dataset")
+PIPELINES = Registry("pipeline")
 
 
 def _concat_dataset(cfg, default_args=None):
     """Build :obj:`ConcatDataset by."""
     from .dataset_wrappers import ConcatDataset
-    img_dir = cfg['img_dir']
-    ann_dir = cfg.get('ann_dir', None)
-    split = cfg.get('split', None)
+
+    img_dir = cfg["img_dir"]
+    ann_dir = cfg.get("ann_dir", None)
+    split = cfg.get("split", None)
     num_img_dir = len(img_dir) if isinstance(img_dir, (list, tuple)) else 1
     if ann_dir is not None:
         num_ann_dir = len(ann_dir) if isinstance(ann_dir, (list, tuple)) else 1
@@ -53,11 +55,11 @@ def _concat_dataset(cfg, default_args=None):
     for i in range(num_dset):
         data_cfg = copy.deepcopy(cfg)
         if isinstance(img_dir, (list, tuple)):
-            data_cfg['img_dir'] = img_dir[i]
+            data_cfg["img_dir"] = img_dir[i]
         if isinstance(ann_dir, (list, tuple)):
-            data_cfg['ann_dir'] = ann_dir[i]
+            data_cfg["ann_dir"] = ann_dir[i]
         if isinstance(split, (list, tuple)):
-            data_cfg['split'] = split[i]
+            data_cfg["split"] = split[i]
         datasets.append(build_dataset(data_cfg, default_args))
 
     return ConcatDataset(datasets)
@@ -67,25 +69,30 @@ def build_dataset(cfg, default_args=None):
     """Build datasets."""
     from .dataset_wrappers import ConcatDataset, RepeatDataset
     from mmseg.datasets import UDADataset, CityscapesDataset
-    if cfg['type'] == 'UDADataset':
+
+    if cfg["type"] == "UDADataset":
         dataset = UDADataset(
-            source=build_dataset(cfg['source'], default_args),
-            target=build_dataset(cfg['target'], default_args),
-            cfg=cfg)
-    elif cfg['type'] == 'CityscapesDataset':
+            source=build_dataset(cfg["source"], default_args),
+            target=build_dataset(cfg["target"], default_args),
+            cfg=cfg,
+        )
+    elif cfg["type"] == "CityscapesDataset":
         dataset = CityscapesDataset(
             crop_pseudo_margins=None,
-            img_suffix='_leftImg8bit.png',
-            seg_map_suffix='_gtFine_labelTrainIds.png',
-            cfg=cfg)
-        
+            img_suffix="_leftImg8bit.png",
+            seg_map_suffix="_gtFine_labelTrainIds.png",
+            cfg=cfg,
+        )
+
     elif isinstance(cfg, (list, tuple)):
         dataset = ConcatDataset([build_dataset(c, default_args) for c in cfg])
-    elif cfg['type'] == 'RepeatDataset':
+    elif cfg["type"] == "RepeatDataset":
         dataset = RepeatDataset(
-            build_dataset(cfg['dataset'], default_args), cfg['times'])
-    elif isinstance(cfg.get('img_dir'), (list, tuple)) or isinstance(
-            cfg.get('split', None), (list, tuple)):
+            build_dataset(cfg["dataset"], default_args), cfg["times"]
+        )
+    elif isinstance(cfg.get("img_dir"), (list, tuple)) or isinstance(
+        cfg.get("split", None), (list, tuple)
+    ):
         dataset = _concat_dataset(cfg, default_args)
     else:
         dataset = build_from_cfg(cfg, DATASETS, default_args)
@@ -93,17 +100,19 @@ def build_dataset(cfg, default_args=None):
     return dataset
 
 
-def build_dataloader(dataset,
-                     samples_per_gpu,
-                     workers_per_gpu,
-                     num_gpus=1,
-                     dist=True,
-                     shuffle=True,
-                     seed=None,
-                     drop_last=False,
-                     pin_memory=True,
-                     persistent_workers=True,
-                     **kwargs):
+def build_dataloader(
+    dataset,
+    samples_per_gpu,
+    workers_per_gpu,
+    num_gpus=1,
+    dist=True,
+    shuffle=True,
+    seed=None,
+    drop_last=False,
+    pin_memory=True,
+    persistent_workers=True,
+    **kwargs
+):
     """Build PyTorch DataLoader.
 
     In distributed training, each GPU/process has a dataloader.
@@ -136,8 +145,7 @@ def build_dataloader(dataset,
     """
     rank, world_size = get_dist_info()
     if dist:
-        sampler = DistributedSampler(
-            dataset, world_size, rank, shuffle=shuffle)
+        sampler = DistributedSampler(dataset, world_size, rank, shuffle=shuffle)
         shuffle = False
         batch_size = samples_per_gpu
         num_workers = workers_per_gpu
@@ -146,11 +154,13 @@ def build_dataloader(dataset,
         batch_size = num_gpus * samples_per_gpu
         num_workers = num_gpus * workers_per_gpu
 
-    init_fn = partial(
-        worker_init_fn, num_workers=num_workers, rank=rank,
-        seed=seed) if seed is not None else None
+    init_fn = (
+        partial(worker_init_fn, num_workers=num_workers, rank=rank, seed=seed)
+        if seed is not None
+        else None
+    )
 
-    if torch.__version__ >= '1.8.0':
+    if torch.__version__ >= "1.8.0":
         data_loader = DataLoader(
             dataset,
             batch_size=batch_size,
@@ -162,7 +172,8 @@ def build_dataloader(dataset,
             worker_init_fn=init_fn,
             drop_last=drop_last,
             persistent_workers=persistent_workers,
-            **kwargs)
+            **kwargs
+        )
     else:
         data_loader = DataLoader(
             dataset,
@@ -174,7 +185,8 @@ def build_dataloader(dataset,
             shuffle=shuffle,
             worker_init_fn=init_fn,
             drop_last=drop_last,
-            **kwargs)
+            **kwargs
+        )
 
     return data_loader
 
