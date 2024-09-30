@@ -241,6 +241,7 @@ def main():
             res = dataset.evaluate(outputs, args.eval, **kwargs)
             print([k for k, v in res.items() if 'IoU' in k])
             print([round(v * 100, 1) for k, v in res.items() if 'IoU' in k])
+            print(res)
 
 
 if __name__ == '__main__':
