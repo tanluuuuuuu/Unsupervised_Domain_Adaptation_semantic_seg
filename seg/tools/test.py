@@ -226,6 +226,7 @@ def main():
         outputs = multi_gpu_test(model, data_loader, args.tmpdir,
                                  args.gpu_collect, efficient_test)
     print("OUPUTS DONE")
+    print(outputs)
 
     rank, _ = get_dist_info()
     if rank == 0:
