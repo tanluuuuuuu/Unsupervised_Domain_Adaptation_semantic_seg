@@ -356,6 +356,7 @@ class EncoderDecoder(BaseSegmentor):
         """Inference with full image."""
 
         seg_logit = self.encode_decode(img, img_meta)
+        print(img_meta)
         if rescale:
             # support dynamic shape for onnx
             if torch.onnx.is_in_onnx_export():
