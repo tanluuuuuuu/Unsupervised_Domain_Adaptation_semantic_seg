@@ -58,8 +58,6 @@ def intersect_and_union(pred_label,
     else:
         pred_label = torch.from_numpy((pred_label))
 
-    print("HIII")
-    print(label)
     if isinstance(label, str):
         label = torch.from_numpy(
             mmcv.imread(label, flag='unchanged', backend='pillow'))
