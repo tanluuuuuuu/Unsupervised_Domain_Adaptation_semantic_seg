@@ -362,7 +362,8 @@ class EncoderDecoder(BaseSegmentor):
                 size = img.shape[2:]
             else:
                 size = img_meta[0]['ori_shape'][:2]
-            print("IMG SIZE: ", size)
+            print("IMG META SIZE: ", size)
+            print("IMG SIZE: ", img.shape[2:])
             seg_logit = resize(
                 seg_logit,
                 size=size,
