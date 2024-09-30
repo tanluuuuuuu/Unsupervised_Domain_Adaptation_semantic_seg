@@ -72,11 +72,11 @@ def build_dataset(cfg, default_args=None):
             source=build_dataset(cfg['source'], default_args),
             target=build_dataset(cfg['target'], default_args),
             cfg=cfg)
-    # elif cfg['type'] == 'CityscapesDataset':
-    #     dataset = CityscapesDataset(
-    #         crop_pseudo_margins=None,
-    #         img_suffix='_leftImg8bit.png',
-    #         seg_map_suffix='_gtFine_labelTrainIds.png')
+    elif cfg['type'] == 'CityscapesDataset':
+        dataset = CityscapesDataset(
+            crop_pseudo_margins=None,
+            img_suffix='_leftImg8bit.png',
+            seg_map_suffix='_gtFine_labelTrainIds.png')
     elif isinstance(cfg, (list, tuple)):
         dataset = ConcatDataset([build_dataset(c, default_args) for c in cfg])
     elif cfg['type'] == 'RepeatDataset':

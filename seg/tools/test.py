@@ -169,7 +169,9 @@ def main():
     if args.test_set:
         for k in cfg.data.test:
             if isinstance(cfg.data.test[k], str):
+                print("OLD: ", cfg.data.test[k])
                 cfg.data.test[k] = cfg.data.test[k].replace('val', 'test')
+                print("NEW: ", cfg.data.test[k])
 
     # init distributed env first, since logger depends on the dist info.
     if args.launcher == 'none':
@@ -226,8 +228,8 @@ def main():
         outputs = multi_gpu_test(model, data_loader, args.tmpdir,
                                  args.gpu_collect, efficient_test)
     print("OUPUTS DONE")
-    print(len(outputs))
-    print(outputs[0].shape)
+    print(len(outputs)) # 1525
+    print(outputs[0].shape) # (1024, 2048)
 
     rank, _ = get_dist_info()
     if rank == 0:
@@ -244,6 +246,7 @@ def main():
             print(res)
             print([k for k, v in res.items() if 'IoU' in k])
             print([round(v * 100, 1) for k, v in res.items() if 'IoU' in k])
+            print(res)
 
 
 if __name__ == '__main__':
