@@ -244,8 +244,8 @@ class CustomDataset(Dataset):
             else:
                 gt_seg_map = mmcv.imread(
                     seg_map, flag='unchanged', backend='pillow')
-                out = resize(
-                    input=out,
+                gt_seg_map = resize(
+                    input=gt_seg_map,
                     size=(1024, 512),
                     mode='bilinear',
                     align_corners=False)
