@@ -15,7 +15,7 @@ import sys
 import os
 
 # Add the directory containing mmcv to the Python path
-sys.path.append(os.path.abspath('../../'))
+sys.path.append(os.path.abspath('../../../'))
 print("PATH ADDED")
 print(sys.path)
 
