@@ -11,11 +11,16 @@ import argparse
 import json
 import os.path as osp
 
+import sys
+import os
+
+# Add the directory containing mmcv to the Python path
+sys.path.append(os.path.abspath('../../'))
+
 import mmcv
 import numpy as np
 from cityscapesscripts.preparation.json2labelImg import json2labelImg
 from PIL import Image
-
 
 def convert_json_to_label(json_file):
     label_file = json_file.replace('_polygons.json', '_labelTrainIds.png')
@@ -69,12 +74,17 @@ def save_class_stats(out_dir, sample_class_stats):
     with open(osp.join(out_dir, 'samples_with_class.json'), 'w') as of:
         json.dump(samples_with_class, of, indent=2)
 
+def mkdir_or_exist(dir_name, mode=0o777):
+    if dir_name == '':
+        return
+    dir_name = osp.expanduser(dir_name)
+    os.makedirs(dir_name, mode=mode, exist_ok=True)
 
 def main():
     args = parse_args()
     cityscapes_path = args.cityscapes_path
     out_dir = args.out_dir if args.out_dir else cityscapes_path
-    mmcv.mkdir_or_exist(out_dir)
+    mkdir_or_exist(out_dir)
 
     gt_dir = osp.join(cityscapes_path, args.gt_dir)
 
