@@ -183,13 +183,15 @@ def main():
     # build the dataloader
     # TODO: support multiple images per gpu (only minor changes are needed)
     dataset = build_dataset(cfg.data.test)
-    print(dataset.keys())
     data_loader = build_dataloader(
         dataset,
         samples_per_gpu=1,
         workers_per_gpu=cfg.data.workers_per_gpu,
         dist=distributed,
         shuffle=False)
+    img, label = next(data_loader)
+    print(img)
+    print(label)
 
     # build the model and load checkpoint
     cfg.model.train_cfg = None
