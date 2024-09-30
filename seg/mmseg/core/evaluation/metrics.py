@@ -58,6 +58,7 @@ def intersect_and_union(pred_label,
     else:
         pred_label = torch.from_numpy((pred_label))
 
+    print("HIII")
     print(label)
     if isinstance(label, str):
         label = torch.from_numpy(
@@ -74,11 +75,6 @@ def intersect_and_union(pred_label,
         label[label == 254] = 255
 
     mask = (label != ignore_index)
-
-    # print(pred_label)
-    # print(label)
-    # print(mask.shape)
-
     pred_label = pred_label[mask]
     label = label[mask]
 
