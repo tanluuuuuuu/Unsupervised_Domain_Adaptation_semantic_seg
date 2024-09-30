@@ -172,7 +172,7 @@ data = dict(
                 ])
         ]),
     test=dict(
-        type='UDADataset',
+        type='CityscapesDataset',
         data_root='/kaggle/input/gtav-daformer/cityscapes',
         img_dir='leftImg8bit/test',
         ann_dir='gtFine/test',
