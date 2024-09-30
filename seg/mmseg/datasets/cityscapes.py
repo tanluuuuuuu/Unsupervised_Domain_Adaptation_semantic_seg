@@ -231,7 +231,8 @@ class CityscapesDataset(CustomDataset):
         CSEval.args.predictionPath = osp.abspath(result_dir)
         CSEval.args.evalPixelAccuracy = True
         CSEval.args.JSONOutput = False
-
+        print(CSEval.args)
+        
         seg_map_list = []
         pred_list = []
 
