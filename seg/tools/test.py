@@ -225,6 +225,7 @@ def main():
             broadcast_buffers=False)
         outputs = multi_gpu_test(model, data_loader, args.tmpdir,
                                  args.gpu_collect, efficient_test)
+    print("OUPUTS DONE")
 
     rank, _ = get_dist_info()
     if rank == 0:
@@ -233,8 +234,10 @@ def main():
             mmcv.dump(outputs, args.out)
         kwargs = {} if args.eval_options is None else args.eval_options
         if args.format_only:
+            print("format_results")
             dataset.format_results(outputs, **kwargs)
         if args.eval:
+            print("eval")
             res = dataset.evaluate(outputs, args.eval, **kwargs)
             print([k for k, v in res.items() if 'IoU' in k])
             print([round(v * 100, 1) for k, v in res.items() if 'IoU' in k])

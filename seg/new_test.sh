@@ -11,7 +11,6 @@ CONFIG_FILE="configs/config_mic_v5_dynamic.py"  # or .json for old configs
 CHECKPOINT_FILE="/kaggle/input/dynamic-iter-19k/pytorch/default/1/iter_19000.pth"
 echo 'Config File:' $CONFIG_FILE
 echo 'Checkpoint File:' $CHECKPOINT_FILE
-echo 'Predictions Output Directory:' $SHOW_DIR
 python -m tools.test ${CONFIG_FILE} ${CHECKPOINT_FILE} --eval mIoU --opacity 1
 
 # Uncomment the following lines to visualize the LR predictions,
