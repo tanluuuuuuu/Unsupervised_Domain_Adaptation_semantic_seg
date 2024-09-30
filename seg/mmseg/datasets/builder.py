@@ -76,13 +76,13 @@ def build_dataset(cfg, default_args=None):
             target=build_dataset(cfg["target"], default_args),
             cfg=cfg,
         )
-    elif cfg["type"] == "CityscapesDataset":
-        dataset = CityscapesDataset(
-            crop_pseudo_margins=None,
-            img_suffix="_leftImg8bit.png",
-            seg_map_suffix="_gtFine_labelTrainIds.png",
-            cfg=cfg,
-        )
+    # elif cfg["type"] == "CityscapesDataset":
+    #     dataset = CityscapesDataset(
+    #         crop_pseudo_margins=None,
+    #         img_suffix="_leftImg8bit.png",
+    #         seg_map_suffix="_gtFine_labelTrainIds.png",
+    #         cfg=cfg,
+    #     )
 
     elif isinstance(cfg, (list, tuple)):
         dataset = ConcatDataset([build_dataset(c, default_args) for c in cfg])
@@ -96,7 +96,7 @@ def build_dataset(cfg, default_args=None):
         dataset = _concat_dataset(cfg, default_args)
     else:
         dataset = build_from_cfg(cfg, DATASETS, default_args)
-
+    print(dataset)
     return dataset
 
 
