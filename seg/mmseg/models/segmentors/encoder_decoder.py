@@ -361,8 +361,8 @@ class EncoderDecoder(BaseSegmentor):
             if torch.onnx.is_in_onnx_export():
                 size = img.shape[2:]
             else:
-                # size = img_meta[0]['ori_shape'][:2]
-                size = img.shape[2:]
+                size = img_meta[0]['ori_shape'][:2]
+                # size = img.shape[2:]
             # print("IMG META SIZE: ", size)
             # print("IMG SIZE: ", img.shape[2:])
             # size = img.shape[2:]
