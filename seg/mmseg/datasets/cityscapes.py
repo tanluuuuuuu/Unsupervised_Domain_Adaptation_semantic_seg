@@ -229,7 +229,7 @@ class CityscapesDataset(CustomDataset):
 
         CSEval.args.evalInstLevelScore = True
         CSEval.args.predictionPath = osp.abspath(result_dir)
-        CSEval.args.evalPixelAccuracy = True
+        CSEval.args.evalPixelAccuracy = False
         CSEval.args.JSONOutput = False
         print(CSEval.args)
         
