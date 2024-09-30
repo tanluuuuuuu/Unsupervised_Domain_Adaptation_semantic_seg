@@ -183,6 +183,7 @@ def main():
     # build the dataloader
     # TODO: support multiple images per gpu (only minor changes are needed)
     dataset = build_dataset(cfg.data.test)
+    print(dataset.keys())
     data_loader = build_dataloader(
         dataset,
         samples_per_gpu=1,
@@ -230,7 +231,6 @@ def main():
 
     print("OUPUTS DONE")
     print(len(outputs)) # 1525
-    print(outputs[0]) # (1024, 2048)
 
     rank, _ = get_dist_info()
     if rank == 0:
