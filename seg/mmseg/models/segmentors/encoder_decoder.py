@@ -362,8 +362,8 @@ class EncoderDecoder(BaseSegmentor):
                 size = img.shape[2:]
             else:
                 # size = img_meta[0]['ori_shape'][:2]
-                print(img.shape)
-                size = img.shape[2:]
+                # print(img.shape) torch.Size([1, 3, 512, 1024])
+                size = (img.shape[3], img.shape[2])
             # print("IMG META SIZE: ", size)
             # print("IMG SIZE: ", img.shape[2:])
             # size = img.shape[2:]
