@@ -124,6 +124,7 @@ def total_intersect_and_union(results,
             intersect_and_union(
                 results[i], gt_seg_maps[i], num_classes, ignore_index,
                 label_map, reduce_zero_label)
+        print(area_intersect, area_union, area_pred_label, area_label)
         total_area_intersect += area_intersect
         total_area_union += area_union
         total_area_pred_label += area_pred_label
