@@ -15,9 +15,6 @@ import sys
 import os
 
 # Add the directory containing mmcv to the Python path
-sys.path.append('/kaggle/working/Unsupervised_Domain_Adaptation_semantic_seg/seg/mmcv')
-print("PATH ADDED")
-print(sys.path)
 
 import mmcv
 import numpy as np
@@ -26,6 +23,7 @@ from PIL import Image
 
 def convert_json_to_label(json_file):
     label_file = json_file.replace('_polygons.json', '_labelTrainIds.png')
+    print(label_file)
     json2labelImg(json_file, label_file, 'trainIds')
 
     if 'train/' in json_file:
