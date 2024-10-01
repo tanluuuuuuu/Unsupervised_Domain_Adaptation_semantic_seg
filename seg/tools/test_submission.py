@@ -6,6 +6,7 @@
 import argparse
 import os
 
+import mmseg
 import mmcv
 import torch
 from mmcv.parallel import MMDataParallel, MMDistributedDataParallel
