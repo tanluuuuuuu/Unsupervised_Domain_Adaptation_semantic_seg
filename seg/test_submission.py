@@ -277,9 +277,11 @@ def main():
 
     # Zip the output files for submission
     with zipfile.ZipFile('submission.zip', 'w') as submission_zip:
-        for img_file in os.listdir(output_dir):
-            img_path = os.path.join(output_dir, img_file)
-            submission_zip.write(img_path, img_file)
+        for class_name in os.listdir(output_dir):
+            class_path = os.path.join(output_dir, class_name)
+            for img_file in os.listdir(class_path):
+                img_path = os.path.join(output_dir, img_file)
+                submission_zip.write(img_path, img_file)
 
     print("Submission file created: submission.zip")
 
