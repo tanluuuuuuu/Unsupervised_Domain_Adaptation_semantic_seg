@@ -285,7 +285,7 @@ def main():
                 img_path = os.path.join(class_path, img_file)
                 submission_zip.write(img_path, img_file)
 
-    print("Submission file created: submission.zip")
+    print(f"Submission file created: {args.zip_name}")
 
 if __name__ == '__main__':
     main()
