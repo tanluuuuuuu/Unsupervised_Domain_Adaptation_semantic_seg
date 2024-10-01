@@ -268,10 +268,8 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     prog_bar = mmcv.ProgressBar(len(dataset))
     for i, data in enumerate(data_loader):
-        print()
         img_tensor = data['img'][0]
         img_metas = data['img_metas'][0].data[0]
-        print("LEN: ", len(img_metas))
 
         save_prediction_as_png(output_dir, img_metas, outputs[i])
         prog_bar.update()
