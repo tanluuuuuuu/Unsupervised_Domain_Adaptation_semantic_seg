@@ -173,7 +173,7 @@ data = dict(
         ]),
     test=dict(
         type='CityscapesDataset',
-        data_root='/kaggle/input/gtav-daformer/cityscapes',
+        data_root='/media/uulnat/New Volume/Unsupervised_Domain_Adaptation_semantic_seg/src/MIC/seg/data/cityscapes',
         img_dir='leftImg8bit/test',
         ann_dir='gtFine/test',
         pipeline=[

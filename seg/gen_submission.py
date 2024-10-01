@@ -129,6 +129,31 @@ def label_to_color(label_img):
         
     return color_img
 
+def save_prediction_as_png(output_dir, img_metas, pred_result):
+    """Save the prediction as a PNG image."""
+    for i, img_meta in enumerate(img_metas):
+        img_name = img_meta['ori_filename']
+        pred = pred_result[i]
+        
+        # Convert the prediction to the required format (class ID or color)
+        pred_img = label_to_color(pred)
+
+        # Extract the directory from the image name (e.g., berlin)
+        city_name = img_name.split('/')[0]
+        
+        # Prepare the output directory path
+        city_output_dir = os.path.join(output_dir, city_name)
+        
+        # Create the city-specific directory if it doesn't exist
+        os.makedirs(city_output_dir, exist_ok=True)
+        
+        # Prepare the output file path
+        submission_img_name = img_name.replace('leftImg8bit.png', '_pred.png')
+        submission_img_path = os.path.join(output_dir, submission_img_name)
+        
+        # Save the color-encoded prediction as PNG
+        Image.fromarray(pred_img).save(submission_img_path)
+
 def main():
     args = parse_args()
 
@@ -206,88 +231,31 @@ def main():
     else:
         print('"PALETTE" not found in meta, use dataset.PALETTE instead')
         model.PALETTE = dataset.PALETTE
-
-    
     model.eval()
-    results = []
+
+    output_dir = './submission_output'
+    os.makedirs(output_dir, exist_ok=True)
+
     dataset = data_loader.dataset
     prog_bar = mmcv.ProgressBar(len(dataset))
     for i, data in enumerate(data_loader):
         with torch.no_grad():
-            result = model(return_loss=False, **data)
-
-        if show or out_dir:
-            img_tensor = data['img'][0]
-            img_metas = data['img_metas'][0].data[0]
-            imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
-            assert len(imgs) == len(img_metas)
-
-            for img, img_meta in zip(imgs, img_metas):
-                h, w, _ = img_meta['img_shape']
-                img_show = img[:h, :w, :]
-
-                ori_h, ori_w = img_meta['ori_shape'][:-1]
-                img_show = mmcv.imresize(img_show, (ori_w, ori_h))
-
-                if out_dir:
-                    out_file = osp.join(out_dir, img_meta['ori_filename'])
-                else:
-                    out_file = None
-
-                if hasattr(model.module.decode_head,
-                           'debug_output_attention') and \
-                        model.module.decode_head.debug_output_attention:
-                    # Attention debug output
-                    mmcv.imwrite(result[0] * 255, out_file)
-                else:
-                    model.module.show_result(
-                        img_show,
-                        result,
-                        palette=dataset.PALETTE,
-                        show=show,
-                        out_file=out_file,
-                        opacity=opacity)
-        if isinstance(result, list):
-            if efficient_test:
-                result = [np2tmp(_, tmpdir='.efficient_test') for _ in result]
-            results.extend(result)
-        else:
-            if efficient_test:
-                result = np2tmp(result, tmpdir='.efficient_test')
-            results.append(result)
-
+            unpack_img = [data['img'][0].data]   # Unpacking DataContainer
+            unpack_img_metas = data['img_metas'][0].data  # Unpacking DataContainer
+            result = model(img=unpack_img, img_metas=unpack_img_metas, return_loss=False)
+        
+        img_metas = data['img_metas'][0].data[0]
+        save_prediction_as_png(output_dir, img_metas, result)
+        
+        prog_bar.update()
         batch_size = len(result)
         for _ in range(batch_size):
             prog_bar.update()
 
-        # Directory paths
-    output_dir = './sub/output'  # Directory where you save prediction files
-    submission_dir = './sub/submission'  # Directory for formatted output
-
-    # Make sure directories exist
-    os.makedirs(output_dir, exist_ok=True)
-    os.makedirs(submission_dir, exist_ok=True)
-
-    # Iterate over the test dataset and generate predictions
-    for img_name in os.listdir(output_dir):
-        # Load the predicted label image (assumed to be stored as numpy array)
-        label_img_path = os.path.join(output_dir, img_name)
-        label_img = np.load(label_img_path)  # Load your predicted labels here (shape: H, W)
-        
-        # Convert label image to color image
-        color_img = label_to_color(label_img)
-        
-        # Save the image in the required submission format (PNG)
-        submission_img_name = img_name.replace('.npy', '_pred.png')  # Example filename format
-        submission_img_path = os.path.join(submission_dir, submission_img_name)
-        
-        # Save as PNG
-        Image.fromarray(color_img).save(submission_img_path)
-
-    # Zip the submission files
+    # Zip the output files for submission
     with zipfile.ZipFile('submission.zip', 'w') as submission_zip:
-        for img_file in os.listdir(submission_dir):
-            img_path = os.path.join(submission_dir, img_file)
+        for img_file in os.listdir(output_dir):
+            img_path = os.path.join(output_dir, img_file)
             submission_zip.write(img_path, img_file)
 
     print("Submission file created: submission.zip")

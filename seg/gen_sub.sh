@@ -1,4 +1,3 @@
-python -m tools.test \
-    "/media/uulnat/New Volume/Unsupervised_Domain_Adaptation_semantic_seg/src/MIC/seg/configs/config_mic_v5_dynamic.py" \
-    "/media/uulnat/New Volume/Unsupervised_Domain_Adaptation_semantic_seg/dynamic_iter_25k/iter_25000.pth" \
-    --eval mIoU
+python gen_submission.py \
+    "/media/uulnat/New Volume/Unsupervised_Domain_Adaptation_semantic_seg/src/MIC/seg/configs/config_mic_v2.py" \
+    "/media/uulnat/New Volume/Unsupervised_Domain_Adaptation_semantic_seg/baseline_25k/40000/40000/iter_40000.pth" 
