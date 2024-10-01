@@ -46,7 +46,7 @@ def save_prediction_as_png(output_dir, img_metas, pred_result):
     """Save the prediction as a PNG image."""
     for i, img_meta in enumerate(img_metas):
         img_name = img_meta['ori_filename']
-        pred = pred_result[i]
+        pred = pred_result
         
         # Convert the prediction to the required format (class ID or color)
         pred_img = label_to_color(pred)
@@ -269,6 +269,7 @@ def main():
     for i, data in enumerate(data_loader):
         img_tensor = data['img'][0]
         img_metas = data['img_metas'][0].data[0]
+        print(len(img_metas))
 
         save_prediction_as_png(output_dir, img_metas, outputs[i])
         prog_bar.update()
