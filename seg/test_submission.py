@@ -20,6 +20,7 @@ from mmseg.datasets import build_dataloader, build_dataset
 from mmseg.models import build_segmentor
 import numpy as np
 import zipfile
+from tqdm import tqdm
 
 CLASSES = ('road', 'sidewalk', 'building', 'wall', 'fence', 'pole',
             'traffic light', 'traffic sign', 'vegetation', 'terrain', 'sky',
@@ -266,16 +267,12 @@ def main():
 
     output_dir = './submission_output'
     os.makedirs(output_dir, exist_ok=True)
-    prog_bar = mmcv.ProgressBar(len(dataset))
-    for i, data in enumerate(data_loader):
-        img_tensor = data['img'][0]
+
+    for i, data in tqdm(enumerate(data_loader)):
         img_metas = data['img_metas'][0].data[0]
 
         save_prediction_as_png(output_dir, img_metas, outputs[i])
-        prog_bar.update()
-        batch_size = len(outputs)
-        for _ in range(batch_size):
-            prog_bar.update()
+
 
     # Zip the output files for submission
     with zipfile.ZipFile('submission.zip', 'w') as submission_zip:
