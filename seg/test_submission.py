@@ -93,6 +93,7 @@ def parse_args():
     parser.add_argument('config', help='test config file path')
     parser.add_argument('checkpoint', help='checkpoint file')
     parser.add_argument('--output-dir', help='output directory')
+    parser.add_argument('--zip-name', help='file zip name')
     parser.add_argument(
         '--aug-test', action='store_true', help='Use Flip and Multi scale aug')
     parser.add_argument(
@@ -277,7 +278,7 @@ def main():
 
     # Zip the output files for submission
     print()
-    with zipfile.ZipFile('submission.zip', 'w') as submission_zip:
+    with zipfile.ZipFile(args.zip_name, 'w') as submission_zip:
         for class_name in os.listdir(output_dir):
             class_path = os.path.join(output_dir, class_name)
             for img_file in os.listdir(class_path):
