@@ -92,6 +92,7 @@ def parse_args():
         description='mmseg test (and eval) a model')
     parser.add_argument('config', help='test config file path')
     parser.add_argument('checkpoint', help='checkpoint file')
+    parser.add_argument('--output-dir', help='output directory')
     parser.add_argument(
         '--aug-test', action='store_true', help='Use Flip and Multi scale aug')
     parser.add_argument(
@@ -265,7 +266,7 @@ def main():
     outputs = single_gpu_test(model, data_loader, args.show, args.show_dir,
                                 efficient_test, args.opacity)
 
-    output_dir = './submission_output'
+    output_dir = args.output_dir
     os.makedirs(output_dir, exist_ok=True)
 
     for i, data in tqdm(enumerate(data_loader)):
