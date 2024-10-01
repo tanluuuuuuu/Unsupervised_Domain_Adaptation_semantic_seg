@@ -5,6 +5,7 @@
 
 import argparse
 import os
+from PIL import Image
 
 import mmseg
 import mmcv
