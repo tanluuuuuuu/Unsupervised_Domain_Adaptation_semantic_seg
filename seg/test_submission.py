@@ -276,6 +276,7 @@ def main():
 
 
     # Zip the output files for submission
+    print()
     with zipfile.ZipFile('submission.zip', 'w') as submission_zip:
         for class_name in os.listdir(output_dir):
             class_path = os.path.join(output_dir, class_name)
