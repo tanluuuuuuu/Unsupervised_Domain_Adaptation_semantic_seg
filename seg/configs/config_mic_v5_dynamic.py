@@ -4,13 +4,13 @@ log_config = dict(
     hooks=[dict(type='TextLoggerHook', by_epoch=False)])
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-load_from = "/kaggle/input/iter-19k/pytorch/default/1/iter_19000.pth"
-resume_from = "/kaggle/input/iter-19k/pytorch/default/1/iter_19000.pth"
+load_from = "/kaggle/input/iter-25k/pytorch/default/1/iter_25000.pth"
+resume_from = "/kaggle/input/iter-25k/pytorch/default/1/iter_25000.pth"
 workflow = [('train', 1)]
 cudnn_benchmark = True
 norm_cfg = dict(type='BN', requires_grad=True)
 find_unused_parameters = True
-checkpoint = '/kaggle/input/iter-19k/pytorch/default/1/iter_19000.pth'
+checkpoint = '/kaggle/input/iter-25k/pytorch/default/1/iter_25000.pth'
 model = dict(
     type='EncoderDecoder',
     pretrained=checkpoint,
@@ -173,9 +173,9 @@ data = dict(
         ]),
     test=dict(
         type='CityscapesDataset',
-        data_root='/kaggle/input/gtav-daformer/cityscapes',
-        img_dir='leftImg8bit/test',
-        ann_dir='gtFine/test',
+        data_root='/media/uulnat/New Volume/Unsupervised_Domain_Adaptation_semantic_seg/src/MIC/seg/data/leftImg8bit_trainvaltest',
+        img_dir='leftImg8bit/val',
+        ann_dir='gtFine/val',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -239,9 +239,9 @@ lr_config = dict(
 seed = 2
 n_gpus = 1
 gpu_model = 'NVIDIATITANRTX'
-runner = dict(type='IterBasedRunner', max_iters=25000)
+runner = dict(type='IterBasedRunner', max_iters=40000)
 checkpoint_config = dict(by_epoch=False, interval=1000, max_keep_ckpts=1)
-evaluation = dict(interval=2000, metric='mIoU')
+evaluation = dict(interval=1000, metric='mIoU')
 name = "anyName"
 exp = 'basic'
 name_dataset = 'gta2cityscapes_512x512'

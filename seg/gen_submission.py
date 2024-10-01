@@ -1,8 +1,7 @@
-# Obtained from: https://github.com/open-mmlab/mmsegmentation/tree/v0.16.0
-# Modifications:
-# - Modification of config and checkpoint to support legacy models
-# - Add inference mode and HRDA output flag
-
+import os
+import numpy as np
+from PIL import Image
+import zipfile
 import argparse
 import os
 
@@ -17,6 +16,19 @@ from mmseg.apis import multi_gpu_test, single_gpu_test
 from mmseg.datasets import build_dataloader, build_dataset
 from mmseg.models import build_segmentor
 
+
+CLASSES = ('road', 'sidewalk', 'building', 'wall', 'fence', 'pole',
+            'traffic light', 'traffic sign', 'vegetation', 'terrain', 'sky',
+            'person', 'rider', 'car', 'truck', 'bus', 'train', 'motorcycle',
+            'bicycle')
+
+PALETTE = [[128, 64, 128], [244, 35, 232], [70, 70, 70], [102, 102, 156],
+            [190, 153, 153], [153, 153, 153], [250, 170, 30], [220, 220, 0],
+            [107, 142, 35], [152, 251, 152], [70, 130, 180], [220, 20, 60],
+            [255, 0, 0], [0, 0, 142], [0, 0, 70], [0, 60, 100],
+            [0, 80, 100], [0, 0, 230], [119, 11, 32]]
+
+CITYSCAPES_COLORS = {k:v for (k, v) in zip(CLASSES, PALETTE)}
 
 def update_legacy_cfg(cfg):
     # The saved json config does not differentiate between list and tuple
@@ -108,37 +120,31 @@ def parse_args():
         os.environ['LOCAL_RANK'] = str(args.local_rank)
     return args
 
+def label_to_color(label_img):
+    h, w = label_img.shape
+    color_img = np.zeros((h, w, 3), dtype=np.uint8)
+    
+    for label, color in CITYSCAPES_COLORS.items():
+        color_img[label_img == label] = color
+        
+    return color_img
 
 def main():
     args = parse_args()
 
-    assert args.out or args.eval or args.format_only or args.show \
-        or args.show_dir, \
-        ('Please specify at least one operation (save/eval/format/show the '
-         'results / save the results) with the argument "--out", "--eval"'
-         ', "--format-only", "--show" or "--show-dir"')
-
-    if args.eval and args.format_only:
-        raise ValueError('--eval and --format_only cannot be both specified')
-
-    if args.out is not None and not args.out.endswith(('.pkl', '.pickle')):
-        raise ValueError('The output file must be a pkl file.')
-
+    # Load config
     cfg = mmcv.Config.fromfile(args.config)
     if args.options is not None:
         cfg.merge_from_dict(args.options)
     cfg = update_legacy_cfg(cfg)
+
     # set cudnn_benchmark
     if cfg.get('cudnn_benchmark', False):
         torch.backends.cudnn.benchmark = True
-    if args.aug_test:
-        # hard code index
-        cfg.data.test.pipeline[1].img_ratios = [
-            0.5, 0.75, 1.0, 1.25, 1.5, 1.75
-        ]
-        cfg.data.test.pipeline[1].flip = True
+
     cfg.model.pretrained = None
     cfg.data.test.test_mode = True
+
     if args.inference_mode == 'same':
         # Use pre-defined inference mode
         pass
@@ -154,17 +160,6 @@ def main():
         cfg.model.test_cfg.batched_slide = True
     else:
         raise NotImplementedError(args.inference_mode)
-
-    if args.hrda_out == 'LR':
-        cfg['model']['decode_head']['fixed_attention'] = 0.0
-    elif args.hrda_out == 'HR':
-        cfg['model']['decode_head']['fixed_attention'] = 1.0
-    elif args.hrda_out == 'ATT':
-        cfg['model']['decode_head']['debug_output_attention'] = True
-    elif args.hrda_out == '':
-        pass
-    else:
-        raise NotImplementedError(args.hrda_out)
 
     if args.test_set:
         for k in cfg.data.test:
@@ -212,37 +207,90 @@ def main():
         print('"PALETTE" not found in meta, use dataset.PALETTE instead')
         model.PALETTE = dataset.PALETTE
 
-    efficient_test = False
-    if args.eval_options is not None:
-        efficient_test = args.eval_options.get('efficient_test', False)
-    print("efficient_test: ", efficient_test)
-    if not distributed:
-        model = MMDataParallel(model, device_ids=[0])
-        outputs = single_gpu_test(model, data_loader, args.show, args.show_dir,
-                                  efficient_test, args.opacity)
-    else:
-        model = MMDistributedDataParallel(
-            model.cuda(),
-            device_ids=[torch.cuda.current_device()],
-            broadcast_buffers=False)
-        outputs = multi_gpu_test(model, data_loader, args.tmpdir,
-                                 args.gpu_collect, efficient_test)
+    
+    model.eval()
+    results = []
+    dataset = data_loader.dataset
+    prog_bar = mmcv.ProgressBar(len(dataset))
+    for i, data in enumerate(data_loader):
+        with torch.no_grad():
+            result = model(return_loss=False, **data)
 
-    rank, _ = get_dist_info()
-    if rank == 0:
-        if args.out:
-            print(f'\nwriting results to {args.out}')
-            mmcv.dump(outputs, args.out)
-        kwargs = {} if args.eval_options is None else args.eval_options
-        if args.format_only:
-            print("format_results")
-            dataset.format_results(outputs, **kwargs)
-        if args.eval:
-            print("eval")
-            res = dataset.evaluate(outputs, args.eval, **kwargs)
-            print([k for k, v in res.items() if 'IoU' in k])
-            print([round(v * 100, 1) for k, v in res.items() if 'IoU' in k])
+        if show or out_dir:
+            img_tensor = data['img'][0]
+            img_metas = data['img_metas'][0].data[0]
+            imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
+            assert len(imgs) == len(img_metas)
 
+            for img, img_meta in zip(imgs, img_metas):
+                h, w, _ = img_meta['img_shape']
+                img_show = img[:h, :w, :]
+
+                ori_h, ori_w = img_meta['ori_shape'][:-1]
+                img_show = mmcv.imresize(img_show, (ori_w, ori_h))
+
+                if out_dir:
+                    out_file = osp.join(out_dir, img_meta['ori_filename'])
+                else:
+                    out_file = None
+
+                if hasattr(model.module.decode_head,
+                           'debug_output_attention') and \
+                        model.module.decode_head.debug_output_attention:
+                    # Attention debug output
+                    mmcv.imwrite(result[0] * 255, out_file)
+                else:
+                    model.module.show_result(
+                        img_show,
+                        result,
+                        palette=dataset.PALETTE,
+                        show=show,
+                        out_file=out_file,
+                        opacity=opacity)
+        if isinstance(result, list):
+            if efficient_test:
+                result = [np2tmp(_, tmpdir='.efficient_test') for _ in result]
+            results.extend(result)
+        else:
+            if efficient_test:
+                result = np2tmp(result, tmpdir='.efficient_test')
+            results.append(result)
+
+        batch_size = len(result)
+        for _ in range(batch_size):
+            prog_bar.update()
+
+        # Directory paths
+    output_dir = './sub/output'  # Directory where you save prediction files
+    submission_dir = './sub/submission'  # Directory for formatted output
+
+    # Make sure directories exist
+    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(submission_dir, exist_ok=True)
+
+    # Iterate over the test dataset and generate predictions
+    for img_name in os.listdir(output_dir):
+        # Load the predicted label image (assumed to be stored as numpy array)
+        label_img_path = os.path.join(output_dir, img_name)
+        label_img = np.load(label_img_path)  # Load your predicted labels here (shape: H, W)
+        
+        # Convert label image to color image
+        color_img = label_to_color(label_img)
+        
+        # Save the image in the required submission format (PNG)
+        submission_img_name = img_name.replace('.npy', '_pred.png')  # Example filename format
+        submission_img_path = os.path.join(submission_dir, submission_img_name)
+        
+        # Save as PNG
+        Image.fromarray(color_img).save(submission_img_path)
+
+    # Zip the submission files
+    with zipfile.ZipFile('submission.zip', 'w') as submission_zip:
+        for img_file in os.listdir(submission_dir):
+            img_path = os.path.join(submission_dir, img_file)
+            submission_zip.write(img_path, img_file)
+
+    print("Submission file created: submission.zip")
 
 if __name__ == '__main__':
     main()
