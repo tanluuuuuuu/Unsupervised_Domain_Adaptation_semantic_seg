@@ -270,7 +270,6 @@ def main():
     for i, data in enumerate(data_loader):
         img_tensor = data['img'][0]
         img_metas = data['img_metas'][0].data[0]
-        print(len(img_metas))
 
         save_prediction_as_png(output_dir, img_metas, outputs[i])
         prog_bar.update()
