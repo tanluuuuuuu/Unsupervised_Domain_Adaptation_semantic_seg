@@ -281,7 +281,7 @@ def main():
         for class_name in os.listdir(output_dir):
             class_path = os.path.join(output_dir, class_name)
             for img_file in os.listdir(class_path):
-                img_path = os.path.join(output_dir, img_file)
+                img_path = os.path.join(class_path, img_file)
                 submission_zip.write(img_path, img_file)
 
     print("Submission file created: submission.zip")
