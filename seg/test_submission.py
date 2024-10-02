@@ -21,6 +21,7 @@ from mmseg.models import build_segmentor
 import numpy as np
 import zipfile
 from tqdm import tqdm
+import cv2
 
 CLASSES = ('road', 'sidewalk', 'building', 'wall', 'fence', 'pole',
             'traffic light', 'traffic sign', 'vegetation', 'terrain', 'sky',
@@ -35,14 +36,14 @@ PALETTE = [[128, 64, 128], [244, 35, 232], [70, 70, 70], [102, 102, 156],
 
 CITYSCAPES_COLORS = {k:v for (k, v) in zip(CLASSES, PALETTE)}
 
-def label_to_color(label_img):
-    h, w = label_img.shape
-    color_img = np.zeros((h, w, 3), dtype=np.uint8)
+# def label_to_color(label_img):
+#     h, w = label_img.shape
+#     color_img = np.zeros((h, w, 3), dtype=np.uint8)
     
-    for label, color in CITYSCAPES_COLORS.items():
-        color_img[label_img == label] = color
+#     for label, color in CITYSCAPES_COLORS.items():
+#         color_img[label_img == label] = color
         
-    return color_img
+#     return color_img
 
 def save_prediction_as_png(output_dir, img_metas, pred_result):
     """Save the prediction as a PNG image."""
@@ -50,9 +51,6 @@ def save_prediction_as_png(output_dir, img_metas, pred_result):
         img_name = img_meta['ori_filename']
         pred = pred_result
         
-        # Convert the prediction to the required format (class ID or color)
-        pred_img = label_to_color(pred)
-
         # Extract the directory from the image name (e.g., berlin)
         city_name = img_name.split('/')[0]
         
@@ -67,7 +65,7 @@ def save_prediction_as_png(output_dir, img_metas, pred_result):
         submission_img_path = os.path.join(output_dir, submission_img_name)
         
         # Save the color-encoded prediction as PNG
-        Image.fromarray(pred_img).save(submission_img_path)
+        cv2.imwrite(submission_img_path, pred)
 
 def update_legacy_cfg(cfg):
     # The saved json config does not differentiate between list and tuple
@@ -272,12 +270,9 @@ def main():
 
     for i, data in tqdm(enumerate(data_loader)):
         img_metas = data['img_metas'][0].data[0]
-
         save_prediction_as_png(output_dir, img_metas, outputs[i])
 
-
     # Zip the output files for submission
-    print()
     with zipfile.ZipFile(args.zip_name, 'w') as submission_zip:
         for class_name in os.listdir(output_dir):
             class_path = os.path.join(output_dir, class_name)
