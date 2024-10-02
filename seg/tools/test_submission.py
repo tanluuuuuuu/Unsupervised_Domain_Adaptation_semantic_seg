@@ -98,8 +98,8 @@ def save_prediction_as_png(output_dir, img_metas, pred_result):
         pred = pred_result
         new_pred = pred.copy()
         for id1, id2 in trainid_to_id.items():
-            print("OLD id: ", id1)
-            print("NEW id: ", id2)
+            # print("OLD id: ", id1)
+            # print("NEW id: ", id2)
             new_pred[pred == id1] = id2
 
         # Extract the directory from the image name (e.g., berlin)
