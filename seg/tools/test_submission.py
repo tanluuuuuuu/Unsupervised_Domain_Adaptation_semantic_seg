@@ -87,7 +87,7 @@ id_to_trainid = {
     32: 17,
     33: 18,
 }
-trainid_to_id = {v: k for (k, v) in id_to_trainid.items()}
+trainid_to_id = {v: k for k, v in id_to_trainid.items()}
 
 CITYSCAPES_COLORS = {k: v for (k, v) in zip(CLASSES, PALETTE)}
 
@@ -97,10 +97,10 @@ def save_prediction_as_png(output_dir, img_metas, pred_result):
         img_name = img_meta["ori_filename"]
         pred = pred_result
         new_pred = pred.copy()
-        for id1, id2 in enumerate(trainid_to_id.items()):
-            # print("OLD id: ", id1)
+        for id1, id2 in trainid_to_id.items():
+            print("OLD id: ", id1)
+            print("NEW id: ", id2)
             new_pred[pred == id1] = id2
-            # print("NEW id: ", id2)
 
         # Extract the directory from the image name (e.g., berlin)
         city_name = img_name.split("/")[0]
