@@ -230,6 +230,7 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
         img = mmcv.imread(img)
         img = img.copy()
         seg = result[0]
+        # breakpoint()
         if palette is None:
             if self.PALETTE is None:
                 palette = np.random.randint(
@@ -254,6 +255,7 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
         color_seg = np.zeros((seg.shape[0], seg.shape[1], 3), dtype=np.uint8)
         for label, color in enumerate(palette):
             color_seg[seg == label, :] = color
+            
         # convert to BGR
         color_seg = color_seg[..., ::-1]
 

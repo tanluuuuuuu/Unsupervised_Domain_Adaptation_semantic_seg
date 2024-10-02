@@ -34,25 +34,28 @@ PALETTE = [[128, 64, 128], [244, 35, 232], [70, 70, 70], [102, 102, 156],
             [255, 0, 0], [0, 0, 142], [0, 0, 70], [0, 60, 100],
             [0, 80, 100], [0, 0, 230], [119, 11, 32]]
 
+id_to_trainid = {7: 0, 8: 1, 11: 2, 12: 3, 13: 4, 17: 5, 19: 6, 20: 7, 21: 8, 22: 9, 23: 10, 24: 11, 25: 12, 26: 13, 27: 14, 28: 15, 31: 16, 32: 17, 33: 18}
+trainid_to_id = {v:k for (k, v) in id_to_trainid}
+
 CITYSCAPES_COLORS = {k:v for (k, v) in zip(CLASSES, PALETTE)}
 
-def label_to_color(label_img):
-    h, w = label_img.shape
-    color_img = np.zeros((h, w, 3), dtype=np.uint8)
+# def label_to_color(label_img):
+#     h, w = label_img.shape
+#     color_img = np.zeros((h, w, 3), dtype=np.uint8)
     
-    label_img = label_img.astype(int)
-    for label, color in CITYSCAPES_COLORS.items():
-        color_img[CLASSES[label_img] == label] = color
+#     for label, color in CITYSCAPES_COLORS.items():
+#         color_img[label_img == label] = color
         
-    return color_img
+#     return color_img
 
 def save_prediction_as_png(output_dir, img_metas, pred_result):
     """Save the prediction as a PNG image."""
     for i, img_meta in enumerate(img_metas):
         img_name = img_meta['ori_filename']
         pred = pred_result
-
-        pred_img = label_to_color(pred)
+        new_pred = pred.copy()
+        for id1, id2 in enumerate(trainid_to_id):
+            new_pred[pred == id1] = id2
         
         # Extract the directory from the image name (e.g., berlin)
         city_name = img_name.split('/')[0]
@@ -68,7 +71,7 @@ def save_prediction_as_png(output_dir, img_metas, pred_result):
         submission_img_path = os.path.join(output_dir, submission_img_name)
         
         # Save the color-encoded prediction as PNG
-        Image.fromarray(pred_img).save(submission_img_path)
+        cv2.imwrite(submission_img_path, new_pred)
 
 def update_legacy_cfg(cfg):
     # The saved json config does not differentiate between list and tuple

@@ -65,7 +65,6 @@ def single_gpu_test(model,
     for i, data in enumerate(data_loader):
         with torch.no_grad():
             result = model(return_loss=False, **data)
-
         if show or out_dir:
             img_tensor = data['img'][0]
             img_metas = data['img_metas'][0].data[0]
@@ -97,6 +96,7 @@ def single_gpu_test(model,
                         show=show,
                         out_file=out_file,
                         opacity=opacity)
+                    
         if isinstance(result, list):
             if efficient_test:
                 result = [np2tmp(_, tmpdir='.efficient_test') for _ in result]

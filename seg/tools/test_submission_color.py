@@ -23,12 +23,12 @@ import zipfile
 from tqdm import tqdm
 import cv2
 
-CLASSES = ('road', 'sidewalk', 'building', 'wall', 'fence', 'pole',
+CLASSES = ('unlabeled', 'road', 'sidewalk', 'building', 'wall', 'fence', 'pole',
             'traffic light', 'traffic sign', 'vegetation', 'terrain', 'sky',
             'person', 'rider', 'car', 'truck', 'bus', 'train', 'motorcycle',
             'bicycle')
 
-PALETTE = [[128, 64, 128], [244, 35, 232], [70, 70, 70], [102, 102, 156],
+PALETTE = [[0, 0, 0], [128, 64, 128], [244, 35, 232], [70, 70, 70], [102, 102, 156],
             [190, 153, 153], [153, 153, 153], [250, 170, 30], [220, 220, 0],
             [107, 142, 35], [152, 251, 152], [70, 130, 180], [220, 20, 60],
             [255, 0, 0], [0, 0, 142], [0, 0, 70], [0, 60, 100],
@@ -36,20 +36,23 @@ PALETTE = [[128, 64, 128], [244, 35, 232], [70, 70, 70], [102, 102, 156],
 
 CITYSCAPES_COLORS = {k:v for (k, v) in zip(CLASSES, PALETTE)}
 
-# def label_to_color(label_img):
-#     h, w = label_img.shape
-#     color_img = np.zeros((h, w, 3), dtype=np.uint8)
+def label_to_color(label_img):
+    h, w = label_img.shape
+    color_img = np.zeros((h, w, 3), dtype=np.uint8)
     
-#     for label, color in CITYSCAPES_COLORS.items():
-#         color_img[label_img == label] = color
+    label_img = label_img.astype(int)
+    for label, color in CITYSCAPES_COLORS.items():
+        color_img[CLASSES[label_img] == label] = color
         
-#     return color_img
+    return color_img
 
 def save_prediction_as_png(output_dir, img_metas, pred_result):
     """Save the prediction as a PNG image."""
     for i, img_meta in enumerate(img_metas):
         img_name = img_meta['ori_filename']
         pred = pred_result
+
+        pred_img = label_to_color(pred)
         
         # Extract the directory from the image name (e.g., berlin)
         city_name = img_name.split('/')[0]
@@ -65,7 +68,7 @@ def save_prediction_as_png(output_dir, img_metas, pred_result):
         submission_img_path = os.path.join(output_dir, submission_img_name)
         
         # Save the color-encoded prediction as PNG
-        cv2.imwrite(submission_img_path, pred)
+        Image.fromarray(pred_img).save(submission_img_path)
 
 def update_legacy_cfg(cfg):
     # The saved json config does not differentiate between list and tuple
@@ -283,4 +286,6 @@ def main():
     print(f"Submission file created: {args.zip_name}")
 
 if __name__ == '__main__':
-    main()
+    img = cv2.imread("/media/uulnat/New Volume1/Unsupervised_Domain_Adaptation_semantic_seg/dynamic_iter_40k/test_result_set/berlin_000088_000019__pred.png")
+    print(np.unique(img))
+    # main()

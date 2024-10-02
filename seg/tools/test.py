@@ -212,6 +212,10 @@ def main():
         print('"PALETTE" not found in meta, use dataset.PALETTE instead')
         model.PALETTE = dataset.PALETTE
 
+    print(model.CLASSES)
+    print(len(model.CLASSES))
+    print(model.PALETTE)
+    
     efficient_test = False
     if args.eval_options is not None:
         efficient_test = args.eval_options.get('efficient_test', False)
