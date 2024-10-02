@@ -40,6 +40,7 @@ def label_to_color(label_img):
     h, w = label_img.shape
     color_img = np.zeros((h, w, 3), dtype=np.uint8)
     
+    label_img = label_img.astype(int)
     for label, color in CITYSCAPES_COLORS.items():
         color_img[CLASSES[label_img] == label] = color
         
@@ -50,7 +51,6 @@ def save_prediction_as_png(output_dir, img_metas, pred_result):
     for i, img_meta in enumerate(img_metas):
         img_name = img_meta['ori_filename']
         pred = pred_result
-
 
         pred_img = label_to_color(pred)
         
