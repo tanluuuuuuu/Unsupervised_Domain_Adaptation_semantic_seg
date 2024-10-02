@@ -91,23 +91,13 @@ trainid_to_id = {v: k for (k, v) in id_to_trainid.items()}
 
 CITYSCAPES_COLORS = {k: v for (k, v) in zip(CLASSES, PALETTE)}
 
-# def label_to_color(label_img):
-#     h, w = label_img.shape
-#     color_img = np.zeros((h, w, 3), dtype=np.uint8)
-
-#     for label, color in CITYSCAPES_COLORS.items():
-#         color_img[label_img == label] = color
-
-#     return color_img
-
-
 def save_prediction_as_png(output_dir, img_metas, pred_result):
     """Save the prediction as a PNG image."""
     for i, img_meta in enumerate(img_metas):
         img_name = img_meta["ori_filename"]
         pred = pred_result
         new_pred = pred.copy()
-        for id1, id2 in enumerate(trainid_to_id):
+        for id1, id2 in enumerate(trainid_to_id.items()):
             print("OLD id: ", id1)
             new_pred[pred == id1] = id2
             print("NEW id: ", id2)

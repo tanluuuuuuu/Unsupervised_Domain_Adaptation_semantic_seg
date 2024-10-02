@@ -286,6 +286,9 @@ def main():
     print(f"Submission file created: {args.zip_name}")
 
 if __name__ == '__main__':
-    img = cv2.imread("/media/uulnat/New Volume1/Unsupervised_Domain_Adaptation_semantic_seg/dynamic_iter_40k/test_result_set/berlin_000088_000019__pred.png")
-    print(np.unique(img))
+    img1 = cv2.imread("/media/uulnat/New Volume1/Unsupervised_Domain_Adaptation_semantic_seg/dynamic_iter_40k/test_result_set/berlin_000088_000019__pred.png")
+    print(np.unique(img1))
+
+    img2 = cv2.imread("/media/uulnat/New Volume1/Unsupervised_Domain_Adaptation_semantic_seg/dynamic_iter_40k/test_result_correct/berlin_000088_000019__pred.png")
+    print(np.unique(img2))
     # main()
