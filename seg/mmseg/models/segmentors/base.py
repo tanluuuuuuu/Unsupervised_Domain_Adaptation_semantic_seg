@@ -230,7 +230,6 @@ class BaseSegmentor(BaseModule, metaclass=ABCMeta):
         img = mmcv.imread(img)
         img = img.copy()
         seg = result[0]
-        # breakpoint()
         if palette is None:
             if self.PALETTE is None:
                 palette = np.random.randint(
