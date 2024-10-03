@@ -12,6 +12,7 @@ import mmcv
 import numpy as np
 from PIL import Image
 
+global_out_dir = ""
 
 def convert_to_train_id(file):
     # re-assign labels to match the format of Cityscapes
@@ -47,6 +48,8 @@ def convert_to_train_id(file):
         if n > 0:
             sample_class_stats[v] = n
     new_file = file.replace('.png', '_labelTrainIds.png')
+    new_file = osp.join(global_out_dir, new_file.split("/")[-1])
+    
     assert file != new_file
     sample_class_stats['file'] = new_file
     Image.fromarray(label_copy, mode='L').save(new_file)
@@ -91,6 +94,7 @@ def main():
     args = parse_args()
     gta_path = args.gta_path
     out_dir = args.out_dir if args.out_dir else gta_path
+    global_out_dir = out_dir
     mmcv.mkdir_or_exist(out_dir)
 
     gt_dir = osp.join(gta_path, args.gt_dir)
