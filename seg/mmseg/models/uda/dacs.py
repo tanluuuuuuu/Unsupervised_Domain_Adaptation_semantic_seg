@@ -376,8 +376,8 @@ class DACS(UDADecorator):
             # MY INFO:  tensor(32.1886, device='cuda:0', grad_fn=<MeanBackward0>)
             
             log_vars.update(add_prefix(feat_log, 'src'))
-            print(self.local_iter)
-            print("MY INFO log_vars 1: ", log_vars)
+            # print(self.local_iter)
+            # print("MY INFO log_vars 1: ", log_vars)
 
             if (feat_log['loss_imnet_feat_dist'] != 'nan'):
                 feat_loss.backward()
@@ -570,5 +570,5 @@ class DACS(UDADecorator):
         #             plt.close()
         #         del seg_debug
         self.local_iter += 1
-        print("MY INFO log_vars 2: ", log_vars)
+        # print("MY INFO log_vars 2: ", log_vars)
         return log_vars
