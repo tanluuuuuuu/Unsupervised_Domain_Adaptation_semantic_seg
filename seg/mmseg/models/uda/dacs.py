@@ -462,110 +462,110 @@ class DACS(UDADecorator):
             log_vars.update(masked_log_vars)
             masked_loss.backward()
 
-        # if self.local_iter % self.debug_img_interval == 0 and \
-        #         not self.source_only:
-        #     out_dir = os.path.join(self.train_cfg['work_dir'], 'debug')
-        #     os.makedirs(out_dir, exist_ok=True)
-        #     vis_img = torch.clamp(denorm(img, means, stds), 0, 1)
-        #     vis_trg_img = torch.clamp(denorm(target_img, means, stds), 0, 1)
-        #     vis_mixed_img = torch.clamp(denorm(mixed_img, means, stds), 0, 1)
-        #     for j in range(batch_size):
-        #         rows, cols = 2, 5
-        #         fig, axs = plt.subplots(
-        #             rows,
-        #             cols,
-        #             figsize=(3 * cols, 3 * rows),
-        #             gridspec_kw={
-        #                 'hspace': 0.1,
-        #                 'wspace': 0,
-        #                 'top': 0.95,
-        #                 'bottom': 0,
-        #                 'right': 1,
-        #                 'left': 0
-        #             },
-        #         )
-        #         subplotimg(axs[0][0], vis_img[j], 'Source Image')
-        #         subplotimg(axs[1][0], vis_trg_img[j], 'Target Image')
-        #         subplotimg(
-        #             axs[0][1],
-        #             gt_semantic_seg[j],
-        #             'Source Seg GT',
-        #             cmap='cityscapes')
-        #         subplotimg(
-        #             axs[1][1],
-        #             pseudo_label[j],
-        #             'Target Seg (Pseudo) GT',
-        #             cmap='cityscapes')
-        #         subplotimg(axs[0][2], vis_mixed_img[j], 'Mixed Image')
-        #         subplotimg(
-        #             axs[1][2], mix_masks[j][0], 'Domain Mask', cmap='gray')
-        #         # subplotimg(axs[0][3], pred_u_s[j], "Seg Pred",
-        #         #            cmap="cityscapes")
-        #         if mixed_lbl is not None:
-        #             subplotimg(
-        #                 axs[1][3], mixed_lbl[j], 'Seg Targ', cmap='cityscapes')
-        #         subplotimg(
-        #             axs[0][3],
-        #             mixed_seg_weight[j],
-        #             'Pseudo W.',
-        #             vmin=0,
-        #             vmax=1)
-        #         if self.debug_fdist_mask is not None:
-        #             subplotimg(
-        #                 axs[0][4],
-        #                 self.debug_fdist_mask[j][0],
-        #                 'FDist Mask',
-        #                 cmap='gray')
-        #         if self.debug_gt_rescale is not None:
-        #             subplotimg(
-        #                 axs[1][4],
-        #                 self.debug_gt_rescale[j],
-        #                 'Scaled GT',
-        #                 cmap='cityscapes')
-        #         for ax in axs.flat:
-        #             ax.axis('off')
-        #         plt.savefig(
-        #             os.path.join(out_dir,
-        #                          f'{(self.local_iter + 1):06d}_{j}.png'))
-        #         plt.close()
+        if self.local_iter % self.debug_img_interval == 0 and \
+                not self.source_only:
+            out_dir = os.path.join(self.train_cfg['work_dir'], 'debug')
+            os.makedirs(out_dir, exist_ok=True)
+            vis_img = torch.clamp(denorm(img, means, stds), 0, 1)
+            vis_trg_img = torch.clamp(denorm(target_img, means, stds), 0, 1)
+            vis_mixed_img = torch.clamp(denorm(mixed_img, means, stds), 0, 1)
+            for j in range(batch_size):
+                rows, cols = 2, 5
+                fig, axs = plt.subplots(
+                    rows,
+                    cols,
+                    figsize=(3 * cols, 3 * rows),
+                    gridspec_kw={
+                        'hspace': 0.1,
+                        'wspace': 0,
+                        'top': 0.95,
+                        'bottom': 0,
+                        'right': 1,
+                        'left': 0
+                    },
+                )
+                subplotimg(axs[0][0], vis_img[j], 'Source Image')
+                subplotimg(axs[1][0], vis_trg_img[j], 'Target Image')
+                subplotimg(
+                    axs[0][1],
+                    gt_semantic_seg[j],
+                    'Source Seg GT',
+                    cmap='cityscapes')
+                subplotimg(
+                    axs[1][1],
+                    pseudo_label[j],
+                    'Target Seg (Pseudo) GT',
+                    cmap='cityscapes')
+                subplotimg(axs[0][2], vis_mixed_img[j], 'Mixed Image')
+                subplotimg(
+                    axs[1][2], mix_masks[j][0], 'Domain Mask', cmap='gray')
+                # subplotimg(axs[0][3], pred_u_s[j], "Seg Pred",
+                #            cmap="cityscapes")
+                if mixed_lbl is not None:
+                    subplotimg(
+                        axs[1][3], mixed_lbl[j], 'Seg Targ', cmap='cityscapes')
+                subplotimg(
+                    axs[0][3],
+                    mixed_seg_weight[j],
+                    'Pseudo W.',
+                    vmin=0,
+                    vmax=1)
+                if self.debug_fdist_mask is not None:
+                    subplotimg(
+                        axs[0][4],
+                        self.debug_fdist_mask[j][0],
+                        'FDist Mask',
+                        cmap='gray')
+                if self.debug_gt_rescale is not None:
+                    subplotimg(
+                        axs[1][4],
+                        self.debug_gt_rescale[j],
+                        'Scaled GT',
+                        cmap='cityscapes')
+                for ax in axs.flat:
+                    ax.axis('off')
+                plt.savefig(
+                    os.path.join(out_dir,
+                                 f'{(self.local_iter + 1):06d}_{j}.png'))
+                plt.close()
 
-        # if self.local_iter % self.debug_img_interval == 0:
-        #     out_dir = os.path.join(self.train_cfg['work_dir'], 'debug')
-        #     os.makedirs(out_dir, exist_ok=True)
-        #     if seg_debug['Source'] is not None and seg_debug:
-        #         if 'Target' in seg_debug:
-        #             seg_debug['Target']['Pseudo W.'] = mixed_seg_weight.cpu(
-        #             ).numpy()
-        #         for j in range(batch_size):
-        #             cols = len(seg_debug)
-        #             rows = max(len(seg_debug[k]) for k in seg_debug.keys())
-        #             fig, axs = plt.subplots(
-        #                 rows,
-        #                 cols,
-        #                 figsize=(5 * cols, 5 * rows),
-        #                 gridspec_kw={
-        #                     'hspace': 0.1,
-        #                     'wspace': 0,
-        #                     'top': 0.95,
-        #                     'bottom': 0,
-        #                     'right': 1,
-        #                     'left': 0
-        #                 },
-        #                 squeeze=False,
-        #             )
-        #             for k1, (n1, outs) in enumerate(seg_debug.items()):
-        #                 for k2, (n2, out) in enumerate(outs.items()):
-        #                     subplotimg(
-        #                         axs[k2][k1],
-        #                         **prepare_debug_out(f'{n1} {n2}', out[j],
-        #                                             means, stds))
-        #             for ax in axs.flat:
-        #                 ax.axis('off')
-        #             plt.savefig(
-        #                 os.path.join(out_dir,
-        #                              f'{(self.local_iter + 1):06d}_{j}_s.png'))
-        #             plt.close()
-        #         del seg_debug
+        if self.local_iter % self.debug_img_interval == 0:
+            out_dir = os.path.join(self.train_cfg['work_dir'], 'debug')
+            os.makedirs(out_dir, exist_ok=True)
+            if seg_debug['Source'] is not None and seg_debug:
+                if 'Target' in seg_debug:
+                    seg_debug['Target']['Pseudo W.'] = mixed_seg_weight.cpu(
+                    ).numpy()
+                for j in range(batch_size):
+                    cols = len(seg_debug)
+                    rows = max(len(seg_debug[k]) for k in seg_debug.keys())
+                    fig, axs = plt.subplots(
+                        rows,
+                        cols,
+                        figsize=(5 * cols, 5 * rows),
+                        gridspec_kw={
+                            'hspace': 0.1,
+                            'wspace': 0,
+                            'top': 0.95,
+                            'bottom': 0,
+                            'right': 1,
+                            'left': 0
+                        },
+                        squeeze=False,
+                    )
+                    for k1, (n1, outs) in enumerate(seg_debug.items()):
+                        for k2, (n2, out) in enumerate(outs.items()):
+                            subplotimg(
+                                axs[k2][k1],
+                                **prepare_debug_out(f'{n1} {n2}', out[j],
+                                                    means, stds))
+                    for ax in axs.flat:
+                        ax.axis('off')
+                    plt.savefig(
+                        os.path.join(out_dir,
+                                     f'{(self.local_iter + 1):06d}_{j}_s.png'))
+                    plt.close()
+                del seg_debug
         self.local_iter += 1
 
         return log_vars
