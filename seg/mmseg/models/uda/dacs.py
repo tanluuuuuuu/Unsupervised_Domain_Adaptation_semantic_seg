@@ -377,8 +377,9 @@ class DACS(UDADecorator):
             # MY INFO:  tensor(32.1886, device='cuda:0', grad_fn=<MeanBackward0>)
             
             log_vars.update(add_prefix(feat_log, 'src'))
-            # print("MY INFO log_vars: ", log_vars)
             feat_loss.backward()
+            print("MY INFO log_vars: ", log_vars)
+
             if self.print_grad_magnitude:
                 params = self.get_model().backbone.parameters()
                 fd_grads = [
