@@ -9,11 +9,10 @@ resume_from = None
 workflow = [('train', 1)]
 cudnn_benchmark = True
 norm_cfg = dict(type='BN', requires_grad=True)
-checkpoint = "https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segformer/mit_b5_20220624-658746d9.pth"
 find_unused_parameters = True
 model = dict(
     type='EncoderDecoder',
-    pretrained=checkpoint,
+    pretrained="/kaggle/input/mit/pytorch/default/1/mit_b5_20220624-658746d9.pth",
     backbone=dict(type='mit_b5', style='pytorch'),
     decode_head=dict(
         type='DAFormerHead',
