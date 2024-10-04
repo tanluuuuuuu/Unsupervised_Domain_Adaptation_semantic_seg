@@ -371,13 +371,16 @@ class DACS(UDADecorator):
         if self.enable_fdist:
             feat_loss, feat_log = self.calc_feat_dist(img, gt_semantic_seg,
                                                       src_feat)
-            # print("MY INFO feat_loss: ", feat_loss)
             # print("MY INFO: ", feat_log)
 
             # MY INFO:  tensor(32.1886, device='cuda:0', grad_fn=<MeanBackward0>)
             
             log_vars.update(add_prefix(feat_log, 'src'))
-            feat_loss.backward()
+
+            if (log_vars['src.loss_imnet_feat_dist'] != 'nan'):
+                print("MY INFO feat_loss: ", feat_loss)
+                feat_loss.backward()
+
             print(self.local_iter)
             print("MY INFO log_vars 1: ", log_vars)
 
