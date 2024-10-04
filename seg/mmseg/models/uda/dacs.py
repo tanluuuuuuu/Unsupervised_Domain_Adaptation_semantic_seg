@@ -371,13 +371,13 @@ class DACS(UDADecorator):
         if self.enable_fdist:
             feat_loss, feat_log = self.calc_feat_dist(img, gt_semantic_seg,
                                                       src_feat)
-            print("MY INFO feat_loss: ", feat_loss)
+            # print("MY INFO feat_loss: ", feat_loss)
             # print("MY INFO: ", feat_log)
 
             # MY INFO:  tensor(32.1886, device='cuda:0', grad_fn=<MeanBackward0>)
             
             log_vars.update(add_prefix(feat_log, 'src'))
-            print("MY INFO log_vars: ", log_vars)
+            # print("MY INFO log_vars: ", log_vars)
             feat_loss.backward()
             if self.print_grad_magnitude:
                 params = self.get_model().backbone.parameters()
