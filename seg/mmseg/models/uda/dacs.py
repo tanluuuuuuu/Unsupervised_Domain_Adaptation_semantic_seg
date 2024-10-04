@@ -529,43 +529,43 @@ class DACS(UDADecorator):
                                  f'{(self.local_iter + 1):06d}_{j}.png'))
                 plt.close()
 
-        if self.local_iter % self.debug_img_interval == 0:
-            out_dir = os.path.join(self.train_cfg['work_dir'], 'debug')
-            os.makedirs(out_dir, exist_ok=True)
-            if seg_debug['Source'] is not None and seg_debug:
-                if 'Target' in seg_debug:
-                    seg_debug['Target']['Pseudo W.'] = mixed_seg_weight.cpu(
-                    ).numpy()
-                for j in range(batch_size):
-                    cols = len(seg_debug)
-                    rows = max(len(seg_debug[k]) for k in seg_debug.keys())
-                    fig, axs = plt.subplots(
-                        rows,
-                        cols,
-                        figsize=(5 * cols, 5 * rows),
-                        gridspec_kw={
-                            'hspace': 0.1,
-                            'wspace': 0,
-                            'top': 0.95,
-                            'bottom': 0,
-                            'right': 1,
-                            'left': 0
-                        },
-                        squeeze=False,
-                    )
-                    for k1, (n1, outs) in enumerate(seg_debug.items()):
-                        for k2, (n2, out) in enumerate(outs.items()):
-                            subplotimg(
-                                axs[k2][k1],
-                                **prepare_debug_out(f'{n1} {n2}', out[j],
-                                                    means, stds))
-                    for ax in axs.flat:
-                        ax.axis('off')
-                    plt.savefig(
-                        os.path.join(out_dir,
-                                     f'{(self.local_iter + 1):06d}_{j}_s.png'))
-                    plt.close()
-                del seg_debug
+        # if self.local_iter % self.debug_img_interval == 0:
+        #     out_dir = os.path.join(self.train_cfg['work_dir'], 'debug')
+        #     os.makedirs(out_dir, exist_ok=True)
+        #     if seg_debug['Source'] is not None and seg_debug:
+        #         if 'Target' in seg_debug:
+        #             seg_debug['Target']['Pseudo W.'] = mixed_seg_weight.cpu(
+        #             ).numpy()
+        #         for j in range(batch_size):
+        #             cols = len(seg_debug)
+        #             rows = max(len(seg_debug[k]) for k in seg_debug.keys())
+        #             fig, axs = plt.subplots(
+        #                 rows,
+        #                 cols,
+        #                 figsize=(5 * cols, 5 * rows),
+        #                 gridspec_kw={
+        #                     'hspace': 0.1,
+        #                     'wspace': 0,
+        #                     'top': 0.95,
+        #                     'bottom': 0,
+        #                     'right': 1,
+        #                     'left': 0
+        #                 },
+        #                 squeeze=False,
+        #             )
+        #             for k1, (n1, outs) in enumerate(seg_debug.items()):
+        #                 for k2, (n2, out) in enumerate(outs.items()):
+        #                     subplotimg(
+        #                         axs[k2][k1],
+        #                         **prepare_debug_out(f'{n1} {n2}', out[j],
+        #                                             means, stds))
+        #             for ax in axs.flat:
+        #                 ax.axis('off')
+        #             plt.savefig(
+        #                 os.path.join(out_dir,
+        #                              f'{(self.local_iter + 1):06d}_{j}_s.png'))
+        #             plt.close()
+        #         del seg_debug
         self.local_iter += 1
 
         return log_vars
