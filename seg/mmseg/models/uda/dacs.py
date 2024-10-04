@@ -378,6 +378,7 @@ class DACS(UDADecorator):
             
             log_vars.update(add_prefix(feat_log, 'src'))
             feat_loss.backward()
+            print(self.local_iter)
             print("MY INFO log_vars 1: ", log_vars)
 
             if self.print_grad_magnitude:
