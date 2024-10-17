@@ -12,7 +12,7 @@ norm_cfg = dict(type='BN', requires_grad=True)
 find_unused_parameters = True
 model = dict(
     type='EncoderDecoder',
-    pretrained="/kaggle/input/mit/pytorch/default/1/mit_b5_20220624-658746d9.pth",
+    pretrained="/kaggle/input/mit-b5-imagenet-segformer/pytorch/default/1/mit_b5.pth",
     backbone=dict(type='mit_b5', style='pytorch'),
     decode_head=dict(
         type='DAFormerHead',
