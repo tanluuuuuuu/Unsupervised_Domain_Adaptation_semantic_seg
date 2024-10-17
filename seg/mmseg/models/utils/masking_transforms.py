@@ -14,6 +14,8 @@ def build_mask_generator(cfg):
     t = cfg.pop('type')
     if t == 'block':
         return BlockMaskGenerator(**cfg)
+    elif t == 'dynamic_block':
+        return DynamicBlockMaskGenerator(**cfg)
     else:
         raise NotImplementedError(t)
 
